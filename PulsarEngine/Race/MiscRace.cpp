@@ -102,6 +102,21 @@ static void DraggableBlueShells(Item::PlayerObj& sub) {
 }
 kmBranch(0x807ae8ac, DraggableBlueShells);
 
+void SetFrameRate(GameScene& scene, u8 mode)
+{
+    First frameSetting = static_cast<First>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_RADIO_FIRST));
+    if (frameSetting == FIRST_TWO) {
+        mode = 1;
+    } else if (frameSetting == FIRST_THREE) {
+        mode = 0;
+    }
+    scene.SetFramerate(mode);
+}
+
+kmCall(0x80554270, SetFrameRate);
+kmCall(0x80554abc, SetFrameRate);
+
+
 //Coloured Minimap
 kmWrite32(0x807DFC24, 0x60000000);
 
@@ -128,7 +143,8 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
     const bool feather = System::sInstance->IsContext(PULSAR_FEATHER);
     const bool megaTC = System::sInstance->IsContext(PULSAR_MEGATC);
     const char* paneName;
-    if (id == BLOOPER && feather) {
+    OS::Report("pls work");
+    if (id == BLOOPER && feather || id == 0x20) {
         if (itemCount == 2) paneName = "feather_2";
         else if (itemCount == 3) paneName = "feather_3";
         else paneName = "feather";

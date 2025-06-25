@@ -6,13 +6,58 @@
 #include <MarioKartWii/Item/Obj/ObjProperties.hpp>
 #include <Race/200ccParams.hpp>
 #include <PulsarSystem.hpp>
+#include <Settings/Settings.hpp>
+#include <Race/KnockoutVS.hpp>
 
 namespace Pulsar {
 namespace Race {
 //Mostly a port of MrBean's version with better hooks and arguments documentation
-RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
-    const u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
+RaceinfoPlayer* LoadCustomLapCount_old(RaceinfoPlayer* player, u8 id) {
+    u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
+    Laps lapSetting = static_cast<Laps>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_LAPS));
+    
+    if (lapSetting == LAPS_ONE) {
+        lapCount = 1;
+    } else if (lapSetting == LAPS_TWO) {
+        lapCount = 2;
+    } else if (lapSetting == LAPS_THREE) {
+        lapCount = 3;
+    } else if (lapSetting == LAPS_FOUR) {
+        lapCount = 4;
+    } else if (lapSetting == LAPS_FIVE) {
+        lapCount = 5;
+    } else if (lapSetting == LAPS_SIX) {
+        lapCount = 6;
+    } else if (lapSetting == LAPS_SEVEN) {
+        lapCount = 7;
+    } else if (lapSetting == LAPS_EIGHT) {
+        lapCount = 8;
+    } else if (lapSetting == LAPS_NINE) {
+        lapCount = 9;
+    }
+    OS::Report("Laps set!");
     Racedata::sInstance->racesScenario.settings.lapCount = lapCount;
+    return new(player) RaceinfoPlayer(id, lapCount);
+}
+
+RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
+    u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
+    Laps lapSetting = static_cast<Laps>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_LAPS));
+    Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
+    RacedataSettings& settings = Racedata::sInstance->racesScenario.settings;
+    if (settings.gamemode == MODE_VS_RACE) {
+        OS::Report("Versus detected!\n");
+        if (mode == MODE_KO) {
+            OS::Report("KO VS Mode!\n");
+            lapCount = totalLaps;
+        } else if (int(lapSetting) > 0) {
+	    OS::Report("Custom lap VS!\n");
+            lapCount = static_cast<u8>(lapSetting);
+        }
+    }
+    OS::Report("Laps: %d\n", lapCount);
+    settings.lapCount = lapCount;
+
     return new(player) RaceinfoPlayer(id, lapCount);
 }
 kmCall(0x805328d4, LoadCustomLapCount);
@@ -25,7 +70,6 @@ void DisplayCorrectLap(AnmTexPatHolder* texPat) { //This Anm is held by a ModelD
     return;
 }
 kmCall(0x80723d70, DisplayCorrectLap);
-
 
 //kmWrite32(0x808b5cd8, 0x3F800000); //change 100cc speed ratio to 1.0    
 Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
@@ -58,6 +102,12 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     stats->standard_acceleration_as[1] *= factor;
     stats->standard_acceleration_as[2] *= factor;
     stats->standard_acceleration_as[3] *= factor;
+
+    float slipperyHandling = stats->handlingFactors[KCL_SLIPPERY_ROAD];
+    for (int i = 0; i < 32; ++i) {
+        OS::Report("Handling set to %f\n", slipperyHandling);
+        stats->handlingFactors[i] = slipperyHandling;
+    }
 
     Kart::minDriftSpeedRatio = 0.55f * (factor > 1.0f ? (1.0f / factor) : 1.0f);
     Kart::unknown_70 = 70.0f * factor;

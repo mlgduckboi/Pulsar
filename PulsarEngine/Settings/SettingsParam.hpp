@@ -11,7 +11,7 @@ namespace Settings {
 class Params {
 public:
     static const int pulsarPageCount = 5;
-    static const int userPageCount = 0;
+    static const int userPageCount = 2;
     static const int pageCount = pulsarPageCount + userPageCount;
 
     static const int maxRadioCount = 6; //per page, due to space
@@ -36,7 +36,8 @@ enum Type {
 
 //If you want to add settings to your packs, they go in this enum, and GetUserSettingValue should be used to obtain the value of a given setting
 enum UserType {
-
+    SETTINGSTYPE_TEST,
+    SETTINGSTYPE_KOVS
 };
 
 }//namespace Settings
@@ -82,6 +83,18 @@ enum KOSettings {
     SETTINGKO_KOPERRACE = 0 + 6,
     SETTINGKO_RACESPERKO = 1 + 6,
 
+};
+
+enum TestSettings {
+    SETTINGTEST_RADIO_FIRST = 0,
+    SETTINGTEST_SCROLL_LAPS = 0 + 6,
+    SETTINGTEST_SCROLL_MODE = 1 + 6,
+};
+
+enum KOVSSettings {
+    SETTINGTEST_SCROLL_GLAPS = 0 + 6,
+    SETTINGTEST_SCROLL_LAPSPERKO = 1 + 6,
+    SETTINGTEST_SCROLL_NUMKOS = 2 + 6,
 };
 
 //MENU SETTINGS
@@ -218,6 +231,58 @@ enum KOSettingRacesPerKO {
     KOSETTING_RACESPERKO_4
 };
 //KOSETTINGS
+
+//Test Settings
+enum First {
+    FIRST_ONE,
+    FIRST_TWO,
+    FIRST_THREE,
+    FIRST_FOUR,
+};
+
+enum Laps {
+    LAPS_DEFUALT,
+    LAPS_ONE,
+    LAPS_TWO,
+    LAPS_THREE,
+    LAPS_FOUR,
+    LAPS_FIVE,
+    LAPS_SIX,
+    LAPS_SEVEN,
+    LAPS_EIGHT,
+    LAPS_NINE,
+};
+
+enum Mode {
+    MODE_DEFAULT,
+    MODE_KO,
+    MODE_2,
+    MODE_3,
+    MODE_4,
+};
+
+//KOVS Settings
+enum GLaps {
+    GLAPS_0,
+    GLAPS_1,
+    GLAPS_2,
+    GLAPS_3,
+    GLAPS_4,
+};
+
+enum LapsPerKO {
+    LAPSPERKO_1,
+    LAPSPERKO_2,
+    LAPSPERKO_3,
+    LAPSPERKO_4,
+};
+
+enum NumKOs {
+    NUMKOS_1,
+    NUMKOS_2,
+    NUMKOS_3,
+    NUMKOS_4,
+};
 
 }//namespace Pulsar
 
