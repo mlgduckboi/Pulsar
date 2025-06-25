@@ -80,7 +80,7 @@ public:
     void UseBullet(); //807a9afc
     void UseMushroom(); //807a9d3c
     void UseMegaMushroom(); //807a9e50
-    void UseGoldenMushroom(); //807a9f6
+    void UseGoldenMushroom(); //807a9f64
     void UseTC(); //807af1bc
     void UseStar(); //807b706c
     void UseThunder(); //807b7b7c

@@ -644,6 +644,7 @@ sInstance__10ArchiveMgr = 0x809bd738
 
 ##SCENE
 GetCurrent__9GameSceneFv = 0x8051bed0
+SetFramerate__9GameSceneFUc = 0x8051af84
 
 #RootScene
 sInstance__9RootScene = 0x809bd740
@@ -742,6 +743,8 @@ __dt__14RaceinfoPlayerFv = 0x80532f48
 __ct__14RaceinfoPlayerFUcUc = 0x80533ed8
 Init__14RaceinfoPlayerFv = 0x80534194
 Disconnect__14RaceinfoPlayerFv = 0x80534cbc
+EndLap__14RaceinfoPlayerFv = 0x805349b8
+Vanish__14RaceinfoPlayerFv = 0x80534c78
 EndRace__14RaceinfoPlayerFRC5TimerbUi = 0x805347f4
 FillTimerWithSplits__14RaceinfoPlayerFUcP5Timer = 0x8053572c
 
@@ -1244,7 +1247,10 @@ FillFinishTime__14CtrlRaceResultFUc = 0x807f595c
 
 #CtrlRaceTime
 SetTimer__12CtrlRaceTimeFP5Timer = 0x807f84c0
+FillTimerGlobal__12CtrlRaceTimeFP5Timer = 0x807f82ac
 EnableFlashingAnimation__12CtrlRaceTimeFv = 0x807f8878
+ResetTimer__12CtrlRaceTimeFR5TimerUsUcUs = 0x807f8380
+OnUpdateReal__12CtrlRaceTimeFP12CtrlRaceTime = 0x807f7ec0
 
 #CtrlRaceWifiMessage
 GetClassName__24CtrlRaceWifiStartMessageCFv = 0x807f8988
@@ -1621,6 +1627,9 @@ sInstance__Q25RKNet12EVENTHandler = 0x809c20f0
 GetStoredItem__Q25RKNet11ITEMHandlerCFUc = 0x8065d21c
 ImportNewPackets__Q25RKNet11ITEMHandlerFv = 0x8065dd3c
 sInstance__Q25RKNet11ITEMHandler = 0x809c20f8
+UseItem__Q24Item9PlayerObjFb = 0x80791910
+UseMushroom__Q24Item6PlayerFv = 0x807a9d3c
+UseBullet__Q24Item6PlayerFv = 0x807a9afc
 
 #SELECT
 DestroyInstance__Q25RKNet13SELECTHandlerFv = 0x8065ff60

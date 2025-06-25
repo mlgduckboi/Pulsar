@@ -10,6 +10,7 @@ public:
     ~CtrlRaceTime() override; //807f890c vtable 808d4010
     void InitSelf() override; //0x1C 807f7c6c
     void OnUpdate() override; //0x1c 807f7ec0
+    static void OnUpdateReal(CtrlRaceTime* self); // 807f7ec0
     void SetPositionAnim(PositionAndScale& positionAndScale, float curFrame) override; //0x20 807f8768
     const ut::detail::RuntimeTypeInfo* GetRuntimeTypeInfo() const override; //0x28 807f8968
     virtual void OnFocus(); //0x50 807f88e8

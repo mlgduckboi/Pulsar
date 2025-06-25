@@ -165,11 +165,8 @@ public:
     RacedataScenario awardScenario; //0x1800
     RKG ghosts[2]; //0x23f0 is the one you're racing, not sure what 1 is
 
-    static const u8 pointsRoom[12][12]; //80890030 12-sized array per room size, so add 12 * (size - 1) to the ptr to get to the wanted roomsize
+    static u8 pointsRoom[12][12]; //80890030 12-sized array per room size, so add 12 * (size - 1) to the ptr to get to the wanted roomsize
 };  //Total size 0x73f0
 size_assert(Racedata, 0x73f0);
-
-
-
 
 #endif

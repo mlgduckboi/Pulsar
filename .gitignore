@@ -8,6 +8,7 @@ BuildCode.bat
 /resources
 /releases
 /.vscode
+/compiler
 */.vscode
 /.vs
 /PulsarPackCreator/bin
