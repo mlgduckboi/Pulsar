@@ -104,10 +104,10 @@ kmBranch(0x807ae8ac, DraggableBlueShells);
 
 void SetFrameRate(GameScene& scene, u8 mode)
 {
-    First frameSetting = static_cast<First>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_RADIO_FIRST));
-    if (frameSetting == FIRST_TWO) {
+    FPS frameSetting = static_cast<FPS>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_RADIO_FPS));
+    if (frameSetting == FPS_30) {
         mode = 1;
-    } else if (frameSetting == FIRST_THREE) {
+    } else if (frameSetting == FPS_60) {
         mode = 0;
     }
     scene.SetFramerate(mode);

@@ -11,34 +11,6 @@
 
 namespace Pulsar {
 namespace Race {
-//Mostly a port of MrBean's version with better hooks and arguments documentation
-RaceinfoPlayer* LoadCustomLapCount_old(RaceinfoPlayer* player, u8 id) {
-    u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
-    Laps lapSetting = static_cast<Laps>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_LAPS));
-    
-    if (lapSetting == LAPS_ONE) {
-        lapCount = 1;
-    } else if (lapSetting == LAPS_TWO) {
-        lapCount = 2;
-    } else if (lapSetting == LAPS_THREE) {
-        lapCount = 3;
-    } else if (lapSetting == LAPS_FOUR) {
-        lapCount = 4;
-    } else if (lapSetting == LAPS_FIVE) {
-        lapCount = 5;
-    } else if (lapSetting == LAPS_SIX) {
-        lapCount = 6;
-    } else if (lapSetting == LAPS_SEVEN) {
-        lapCount = 7;
-    } else if (lapSetting == LAPS_EIGHT) {
-        lapCount = 8;
-    } else if (lapSetting == LAPS_NINE) {
-        lapCount = 9;
-    }
-    OS::Report("Laps set!");
-    Racedata::sInstance->racesScenario.settings.lapCount = lapCount;
-    return new(player) RaceinfoPlayer(id, lapCount);
-}
 
 RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
     u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
@@ -49,9 +21,16 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
         OS::Report("Versus detected!\n");
         if (mode == MODE_KO) {
             OS::Report("KO VS Mode!\n");
+            numKOs = 1 + Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_KOVS), Pulsar::SETTINGTEST_RADIO_NUMKOS);
+            lapsPerKO = 1 + Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_KOVS), Pulsar::SETTINGTEST_RADIO_LAPSPERKO);
+            graceLaps = Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_KOVS), Pulsar::SETTINGTEST_SCROLL_GLAPS);
+            OS::Report("KO VS Mode! nKOs: %d, LPE: %d, glaps: %d\n", numKOs, lapsPerKO, graceLaps);
+            totalLaps = graceLaps + ((12 / numKOs) * lapsPerKO);
             lapCount = totalLaps;
+        } else if (mode == MODE_FR_FRENZY) {
+            lapCount = 50;
         } else if (int(lapSetting) > 0) {
-	    OS::Report("Custom lap VS!\n");
+	        OS::Report("Custom lap VS!\n");
             lapCount = static_cast<u8>(lapSetting);
         }
     }

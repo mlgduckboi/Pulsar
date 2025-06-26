@@ -14,53 +14,6 @@
 namespace Pulsar {
 namespace Race {
 
-void EndLapHook_old(RaceinfoPlayer raceInfoPlayer) {
-    static int playerIdsFinished[12] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-    static int playersFinished = 0;
-    OS::Report("finished lap %d in place %d\n", raceInfoPlayer.currentLap, raceInfoPlayer.position);
-    //Item::Manager::sInstance->players[raceInfoPlayer.id].inventory.currentItemId = TRIPLE_MUSHROOM;
-    //Item::Manager::sInstance->players[raceInfoPlayer.id].inventory.currentItemCount = 3;
-    if ((raceInfoPlayer.currentLap % lapsPerKO == 0) && (raceInfoPlayer.position > (12 - ((raceInfoPlayer.currentLap - graceLaps) / lapsPerKO) * numKOs))) {
-        //raceInfoPlayer.raceFinishTime->minutes = 60 + raceInfoPlayer.position;
-	//raceInfoPlayer.raceFinishTime->seconds = 0;
-	//raceInfoPlayer.raceFinishTime->milliseconds = 0;
-        //raceInfoPlayer.EndRace(*raceInfoPlayer.raceFinishTime, true, 0);
-        raceInfoPlayer.Vanish();
-        //playerIdsFinished[playersFinished++] = raceInfoPlayer.id;
-        // 12/numKOs sections of numKOs
-	    playersFinished++;
-        int sectionStart = ((((raceInfoPlayer.currentLap - graceLaps) / lapsPerKO) - 1) * numKOs) + numKOs - 1;
-        while (playerIdsFinished[sectionStart] != -1) {
-	        --sectionStart;
-	    }
-        playerIdsFinished[sectionStart] = raceInfoPlayer.id;
-        OS::Report("player %d ko'd, now %d total kos\n", raceInfoPlayer.id, playersFinished);
-	if (playersFinished == 12) {
-	    for (int i = 11; i >= 0; --i) {
-    	        Raceinfo* raceInfo = Raceinfo::sInstance;
-		RaceinfoPlayer* player = raceInfo->players[playerIdsFinished[i]];
-		player->raceFinishTime->minutes = 13 - i;
-		player->raceFinishTime->seconds = 0;
-		player->raceFinishTime->milliseconds = 0;
-                OS::Report("Player %d finishes with time %d!\n", playerIdsFinished[i], player->raceFinishTime->minutes);
- 		playerIdsFinished[i] = -1;
-        	player->EndRace(*(player->raceFinishTime), true, 0);
-	    }
-	    playersFinished = 0;
-	}
-        return;
-    }
-    raceInfoPlayer.EndLap();
-}
-        /*Racedata* raceData = Racedata::sInstance;
-        Raceinfo* ri = Raceinfo::sInstance;
-        u8 playerCount = raceData->racesScenario.playerCount;
-	for (u8 pi = 0; pi < playerCount; ++pi) {
-	    u8 playerId = ri->playerIdInEachPosition[pi];
-	    RaceinfoPlayer* pl = ri->players[playerId];
-            playerFinalCompletion[playerId] = pl->raceCompletion;
-            OS::Report("player %d has rank %d / %d, with lap completion %f\n", playerId, pl->position, pi + 1, pl->raceCompletion);
-	}*/
 
 void EndLapHook(RaceinfoPlayer raceInfoPlayer) {
     OS::Report("finished lap %d in place %d, with completion %f\n", raceInfoPlayer.currentLap, raceInfoPlayer.position, raceInfoPlayer.raceCompletion);
@@ -100,17 +53,20 @@ void CustomPositionTracking() {
         // -- Branch A: Still racing?`
         if ((pl->stateFlags & 0x02) == 0) {
             metrics[slot] = pl->raceCompletion;
-            
         }
         // -- Branch B: Finished
         else {
             if ((mode == MODE_KO) && (settings.gamemode == MODE_VS_RACE)) {
-	        metrics[slot] = double((pl->currentLap) + 1); //playerFinalCompletion[pl->id];
-	    } else {
-		Timer* timer = pl->raceFinishTime;
+	            metrics[slot] = double((pl->currentLap) + 1); //playerFinalCompletion[pl->id];
+	        } else {
+                Timer* timer = pl->raceFinishTime;
                 u32 total = timer->milliseconds + (timer->seconds + (timer->minutes & 0xFF)* 60)*1000;
-                metrics[slot]  = 600000000-double(total);	
-	    }
+                if ((mode == MODE_FR_FRENZY) && (settings.gamemode == MODE_VS_RACE)) {
+                    metrics[slot]  = 600000000+double(total);
+                } else {
+                    metrics[slot]  = 600000000-double(total);
+                }
+            }
             //Timer* timer = pl->raceFinishTime;
             //u32 total = timer->milliseconds + (timer->seconds + (timer->minutes & 0xFF)* 60)*1000;
             //metrics[slot]  = -double(total);

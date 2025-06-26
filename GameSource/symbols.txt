@@ -1251,6 +1251,7 @@ FillTimerGlobal__12CtrlRaceTimeFP5Timer = 0x807f82ac
 EnableFlashingAnimation__12CtrlRaceTimeFv = 0x807f8878
 ResetTimer__12CtrlRaceTimeFR5TimerUsUcUs = 0x807f8380
 OnUpdateReal__12CtrlRaceTimeFP12CtrlRaceTime = 0x807f7ec0
+GetPlayerMaxLap__12CtrlRaceTimeFUc = 0x807f7e64
 
 #CtrlRaceWifiMessage
 GetClassName__24CtrlRaceWifiStartMessageCFv = 0x807f8988

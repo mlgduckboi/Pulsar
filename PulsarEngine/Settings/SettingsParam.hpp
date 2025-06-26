@@ -86,15 +86,15 @@ enum KOSettings {
 };
 
 enum TestSettings {
-    SETTINGTEST_RADIO_FIRST = 0,
+    SETTINGTEST_RADIO_FPS = 0,
     SETTINGTEST_SCROLL_LAPS = 0 + 6,
     SETTINGTEST_SCROLL_MODE = 1 + 6,
 };
 
 enum KOVSSettings {
+    SETTINGTEST_RADIO_LAPSPERKO = 0,
+    SETTINGTEST_RADIO_NUMKOS = 1,
     SETTINGTEST_SCROLL_GLAPS = 0 + 6,
-    SETTINGTEST_SCROLL_LAPSPERKO = 1 + 6,
-    SETTINGTEST_SCROLL_NUMKOS = 2 + 6,
 };
 
 //MENU SETTINGS
@@ -233,11 +233,10 @@ enum KOSettingRacesPerKO {
 //KOSETTINGS
 
 //Test Settings
-enum First {
-    FIRST_ONE,
-    FIRST_TWO,
-    FIRST_THREE,
-    FIRST_FOUR,
+enum FPS {
+    FPS_DEFAULT,
+    FPS_30,
+    FPS_60,
 };
 
 enum Laps {
@@ -256,7 +255,7 @@ enum Laps {
 enum Mode {
     MODE_DEFAULT,
     MODE_KO,
-    MODE_2,
+    MODE_FR_FRENZY,
     MODE_3,
     MODE_4,
 };
@@ -271,17 +270,17 @@ enum GLaps {
 };
 
 enum LapsPerKO {
-    LAPSPERKO_1,
-    LAPSPERKO_2,
-    LAPSPERKO_3,
-    LAPSPERKO_4,
+    LAPSPERKO_1 = 1,
+    LAPSPERKO_2 = 2,
+    LAPSPERKO_3 = 3,
+    LAPSPERKO_4 = 4,
 };
 
 enum NumKOs {
-    NUMKOS_1,
-    NUMKOS_2,
-    NUMKOS_3,
-    NUMKOS_4,
+    NUMKOS_1 = 1,
+    NUMKOS_2 = 2,
+    NUMKOS_3 = 3,
+    NUMKOS_4 = 4,
 };
 
 }//namespace Pulsar
