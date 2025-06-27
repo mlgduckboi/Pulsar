@@ -14,6 +14,10 @@
 namespace Pulsar {
 namespace Race {
 
+int lapsPerKO = 2; //2
+int numKOs = 4; //3
+int graceLaps = 0;
+int totalLaps = graceLaps + ((12 / numKOs) * lapsPerKO);
 
 void EndLapHook(RaceinfoPlayer raceInfoPlayer) {
     OS::Report("finished lap %d in place %d, with completion %f\n", raceInfoPlayer.currentLap, raceInfoPlayer.position, raceInfoPlayer.raceCompletion);
@@ -30,7 +34,7 @@ void EndLapHook(RaceinfoPlayer raceInfoPlayer) {
             return;
         }
     }
-    raceInfoPlayer.EndLap();
+    raceInfoPlayer.EndLap(); // TODO: remove lap noise for fr frenzy
 }
 
 kmCall(0x80534fbc, EndLapHook);

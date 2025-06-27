@@ -1253,6 +1253,9 @@ ResetTimer__12CtrlRaceTimeFR5TimerUsUcUs = 0x807f8380
 OnUpdateReal__12CtrlRaceTimeFP12CtrlRaceTime = 0x807f7ec0
 GetPlayerMaxLap__12CtrlRaceTimeFUc = 0x807f7e64
 
+#CtrlRaceLap
+OnUpdateReal__11CtrlRaceLapFP11CtrlRaceLap = 0x807ef810
+
 #CtrlRaceWifiMessage
 GetClassName__24CtrlRaceWifiStartMessageCFv = 0x807f8988
 HasStarted__24CtrlRaceWifiStartMessageFv = 0x807F8BA4
@@ -1733,6 +1736,7 @@ UseMegaMushroom__Q24Item6PlayerFv = 0x807a9e50
 #ItemManager
 Update__Q24Item7ManagerFv = 0x80799850
 sInstance__Q24Item7Manager = 0x809c3618
+IsThereCapacityForItem__Q24Item7ManagerF6ItemId = 0x80799be8
 
 #ItemEVENT
 FillOrExtractShootPos__Q24Item11EVENTBufferFPsP4Vec3b = 0x8079ad38
@@ -1749,6 +1753,7 @@ DeployBlooper__Q24Item8GessoMgrFUs = 0x807a9128
 DecideItem__Q24Item12ItemSlotDataFUsUcbbPQ24Item6Player = 0x807bb42c
 DecideRouletteItem__Q24Item12ItemSlotDataFUsUc6ItemIdb = 0x807bb8d0
 itemSlotData = 0x809c3670
+CanItemNotBeObtained__Q24Item12ItemSlotDataF9ItemObjIdb = 0x807bb380
 
 #Inventory
 Update__Q24Item15PlayerInventoryFv = 0x807bc6e8

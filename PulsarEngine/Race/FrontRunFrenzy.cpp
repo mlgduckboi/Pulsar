@@ -10,16 +10,20 @@
 #include <MarioKartWii/System/Identifiers.hpp>
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/UI/Ctrl/CtrlRace/CtrlRaceTime.hpp>
+#include <MarioKartWii/UI/Ctrl/CtrlRace/CtrlRaceLap.hpp>
+#include <MarioKartWii/Item/ItemSlot.hpp>
+#include <MarioKartWii/Item/ItemManager.hpp>
+#include <MarioKartWii/Item/Obj/ObjProperties.hpp>
 #include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
-#include <Settings/Settings.hpp>
+#include <Race/FrontRunFrenzy.hpp>
 
 namespace Pulsar {
 namespace Race {
 
-static u8 prevPidInFirst = 0;
-static u32 times[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
-static u32 timestampEnteredFirst = 0;
-static bool isFrontrunFrenzy = false;
+u8 prevPidInFirst = 0;
+u32 times[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
+u32 timestampEnteredFirst = 0;
+bool isFrontrunFrenzy = false;
 
 void ResetScores() {
     prevPidInFirst = 0;
@@ -29,7 +33,7 @@ void ResetScores() {
     }
     RacedataSettings& settings = Racedata::sInstance->racesScenario.settings;
     Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
-    isFrontrunFrenzy = (settings.gamemode == MODE_VS_RACE && mode == MODE_FR_FRENZY);
+    Pulsar::Race::isFrontrunFrenzy = (settings.gamemode == MODE_VS_RACE && mode == MODE_FR_FRENZY);
 }
 RaceLoadHook resetScores(ResetScores);
 
@@ -59,9 +63,11 @@ void UpdateCtrlRaceTime(CtrlRaceTime* crt) {
         }
         timestampEnteredFirst = globalTimestamp;
         prevPidInFirst = pidInFirst;
+        /*
         for (int i = 0; i < 12; ++i) {
             OS::Report("pid %d has score %d\n", i, times[i]);
         }
+        */
     }
 
     u32 totalTimeInFirst = (globalTimestamp - timestampEnteredFirst) + (times[pidInFirst] * 1000);
@@ -81,6 +87,40 @@ void UpdateCtrlRaceTime(CtrlRaceTime* crt) {
     return;
 }
 kmWritePointer(0x808d402c, &UpdateCtrlRaceTime);
+
+void UpdateControlRaceLap(CtrlRaceLap* crl) {
+    if (isFrontrunFrenzy) return;
+    CtrlRaceLap::OnUpdateReal(crl);
+    return;
+}
+kmWritePointer(0x808d3d34, &UpdateControlRaceLap);
+
+/*
+bool AllowAllItems(Item::ItemSlotData* isd, ItemObjId objId, bool r5) {
+    bool ret = isd->CanItemNotBeObtained(objId, r5);
+    OS::Report("CanNotBeObtained returned %d\n", ret);
+    return ret;
+}
+kmCall(0x8065e150, AllowAllItems);
+kmCall(0x80796d30, AllowAllItems);
+
+static bool AlwaysCapacityForItem(ItemId id) {
+    bool ret = Item::Manager::IsThereCapacityForItem(id);
+    OS::Report("IsThereCapacityForItem returned %d\n", ret);
+    return ret;
+}
+kmCall(0x807ba17c, AlwaysCapacityForItem);
+kmCall(0x8072fda4, AlwaysCapacityForItem);
+*/
+
+/* Taken from Brawlbox's Variety Pack */
+static void ChangeBlueOBJProperties(Item::ObjProperties* dest, const Item::ObjProperties& rel){
+    new (dest) Item::ObjProperties(rel);
+    if (isFrontrunFrenzy) {
+        dest->limit = 30;
+    }
+}
+kmCall(0x80790b74, ChangeBlueOBJProperties);
 
 }//namespace Race
 }//namespace Pulsar

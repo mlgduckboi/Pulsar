@@ -3,10 +3,11 @@
 
 namespace Pulsar {
 namespace Race {
-static int lapsPerKO = 2; //2
-static int numKOs = 4; //3
-static int graceLaps = 0;
-static int totalLaps = graceLaps + ((12 / numKOs) * lapsPerKO);
+
+extern int lapsPerKO; //2
+extern int numKOs; //3
+extern int graceLaps;
+extern int totalLaps;
 
 }//namespace Race
 }//namespace Pulsar

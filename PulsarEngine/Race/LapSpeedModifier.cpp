@@ -13,6 +13,7 @@ namespace Pulsar {
 namespace Race {
 
 RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
+    Pulsar::Race::numKOs;
     u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
     Laps lapSetting = static_cast<Laps>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_LAPS));
     Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
@@ -28,7 +29,8 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
             totalLaps = graceLaps + ((12 / numKOs) * lapsPerKO);
             lapCount = totalLaps;
         } else if (mode == MODE_FR_FRENZY) {
-            lapCount = 50;
+            OS::Report("Frontrun Frenzy!\n");
+            lapCount = 8; //TODO: make laps infinite
         } else if (int(lapSetting) > 0) {
 	        OS::Report("Custom lap VS!\n");
             lapCount = static_cast<u8>(lapSetting);
@@ -82,11 +84,13 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     stats->standard_acceleration_as[2] *= factor;
     stats->standard_acceleration_as[3] *= factor;
 
+    /*
     float slipperyHandling = stats->handlingFactors[KCL_SLIPPERY_ROAD];
     for (int i = 0; i < 32; ++i) {
         OS::Report("Handling set to %f\n", slipperyHandling);
         stats->handlingFactors[i] = slipperyHandling;
     }
+    */
 
     Kart::minDriftSpeedRatio = 0.55f * (factor > 1.0f ? (1.0f / factor) : 1.0f);
     Kart::unknown_70 = 70.0f * factor;
@@ -103,5 +107,6 @@ kmWrite32(0x80723D10, 0x281D0009);
 kmWrite32(0x80723D40, 0x3BA00009);
 
 kmWrite24(0x808AAA0C, 'PUL'); //time_number -> time_numPUL
+
 }//namespace Race
 }//namespace Pulsar
