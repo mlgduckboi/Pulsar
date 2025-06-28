@@ -8,6 +8,7 @@ extern int lapsPerKO; //2
 extern int numKOs; //3
 extern int graceLaps;
 extern int totalLaps;
+extern bool isKOmode;
 
 }//namespace Race
 }//namespace Pulsar

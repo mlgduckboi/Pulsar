@@ -39,18 +39,5 @@ void UpdatePoints(RacedataScenario& scenario) {
 }
 kmCall(0x8085c878, UpdatePoints);
 
-/*
-bool RaceCanEnd(GMData& gmd) {
-    OS::Report("thing do thing");
-    if (gmd.CanRaceEnd()) {
-        OS::Report("end?");
-    } else {
-        OS::Report("dont end?");
-    }
-    return false;
-}
-kmWritePointer(0x808b3428, RaceCanEnd);
-*/
-
 }//namespace Race
 }//namespace Pulsar

@@ -9,7 +9,9 @@
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/UI/Ctrl/CtrlRace/CtrlRaceTime.hpp>
 #include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
-
+#include <include/c_math.h>
+#include <MarioKartWii/UI/Ctrl/CtrlRace/CtrlRaceRankNum.hpp>
+#include <Race/FrontRunFrenzy.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -18,11 +20,19 @@ int lapsPerKO = 2; //2
 int numKOs = 4; //3
 int graceLaps = 0;
 int totalLaps = graceLaps + ((12 / numKOs) * lapsPerKO);
+bool isKOmode = false;
+
+void DetectKOMode() {
+    RacedataSettings& settings = Racedata::sInstance->racesScenario.settings;
+    Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
+    isKOmode = (settings.gamemode == MODE_VS_RACE && mode == MODE_KO);
+}
+RaceLoadHook detectKOmode(DetectKOMode);
 
 void EndLapHook(RaceinfoPlayer raceInfoPlayer) {
     OS::Report("finished lap %d in place %d, with completion %f\n", raceInfoPlayer.currentLap, raceInfoPlayer.position, raceInfoPlayer.raceCompletion);
-    Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
-    if ((mode == MODE_KO) && (raceInfoPlayer.currentLap % lapsPerKO == 0) && (raceInfoPlayer.position > (12 - ((raceInfoPlayer.currentLap - graceLaps) / lapsPerKO) * numKOs))) {
+    //Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
+    if (isKOmode && (raceInfoPlayer.currentLap % lapsPerKO == 0) && (raceInfoPlayer.position > (12 - ((raceInfoPlayer.currentLap - graceLaps) / lapsPerKO) * numKOs))) {
         /*raceInfoPlayer.raceFinishTime->minutes = 60 + raceInfoPlayer.position;
 	    raceInfoPlayer.raceFinishTime->seconds = 0;
 	    raceInfoPlayer.raceFinishTime->milliseconds = 0;*/
@@ -44,8 +54,8 @@ void CustomPositionTracking() {
     Racedata* raceData = Racedata::sInstance;
     Raceinfo* ri = Raceinfo::sInstance;
     u8 playerCount = raceData->racesScenario.playerCount;
-    Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
-    RacedataSettings& settings = raceData->racesScenario.settings;
+    //Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
+    //RacedataSettings& settings = raceData->racesScenario.settings;
     double metrics[12];
     u8 slotToPlayer[13]; // 1‑based: slotToPlayer[1] … slotToPlayer[playerCount]
 
@@ -60,12 +70,12 @@ void CustomPositionTracking() {
         }
         // -- Branch B: Finished
         else {
-            if ((mode == MODE_KO) && (settings.gamemode == MODE_VS_RACE)) {
+            if (isKOmode) {
 	            metrics[slot] = double((pl->currentLap) + 1); //playerFinalCompletion[pl->id];
 	        } else {
                 Timer* timer = pl->raceFinishTime;
                 u32 total = timer->milliseconds + (timer->seconds + (timer->minutes & 0xFF)* 60)*1000;
-                if ((mode == MODE_FR_FRENZY) && (settings.gamemode == MODE_VS_RACE)) {
+                if (isFrontrunFrenzy) {
                     metrics[slot]  = 600000000+double(total);
                 } else {
                     metrics[slot]  = 600000000-double(total);
@@ -102,6 +112,25 @@ void CustomPositionTracking() {
     return;
 }
 kmBranch(0x805336d8,CustomPositionTracking);
+
+void BlockRacePosition(CtrlRaceRankNum* crrn) {
+    RaceinfoPlayer* rip = Raceinfo::sInstance->players[crrn->playerId];
+    u8 finalLap = Racedata::sInstance->racesScenario.settings.lapCount;
+    float raceComp = rip->raceCompletion;
+    u8 lapCount = rip->currentLap;
+    raceComp -= lapCount;
+    //OS::Report("lapcomp %f\n", raceComp);
+    if (lapCount > 0) { // if we're at the end of the lap
+        OS::Report("%d %d\n", lapCount, finalLap);
+        crrn->isHidden = (
+                            (raceComp > .91) 
+                            && ((lapCount == finalLap)
+                            || (isKOmode && ((lapCount - graceLaps) % lapsPerKO) == 0)));
+    }
+    //if ((raceComp > .91) && (lapCount > 0)) return;
+    CtrlRaceRankNum::OnUpdateReal(crrn);
+}
+kmWritePointer(0x808d3eb4, &BlockRacePosition);
 
 }//namespace Race
 }//namespace Pulsar

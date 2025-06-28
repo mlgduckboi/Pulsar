@@ -84,11 +84,19 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     stats->standard_acceleration_as[2] *= factor;
     stats->standard_acceleration_as[3] *= factor;
 
+    // better low traction simulation tests for inside bikes
+
     /*
     float slipperyHandling = stats->handlingFactors[KCL_SLIPPERY_ROAD];
     for (int i = 0; i < 32; ++i) {
         OS::Report("Handling set to %f\n", slipperyHandling);
         stats->handlingFactors[i] = slipperyHandling;
+    }
+
+    if (stats->type == INSIDE_BIKE) {
+        OS::Report("changing to outside");
+        stats->type = OUTSIDE_BIKE;
+        stats->targetAngle = 0;
     }
     */
 

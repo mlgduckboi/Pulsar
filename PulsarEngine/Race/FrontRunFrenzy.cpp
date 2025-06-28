@@ -71,7 +71,7 @@ void UpdateCtrlRaceTime(CtrlRaceTime* crt) {
     }
 
     u32 totalTimeInFirst = (globalTimestamp - timestampEnteredFirst) + (times[pidInFirst] * 1000);
-    if ((totalTimeInFirst / 1000) >= 30) {
+    if (((totalTimeInFirst / 1000) >= 30) && true) {
         times[pidInFirst] = 30;
         for (int i = 0; i < 12; ++i) {
             RaceinfoPlayer* player = Raceinfo::sInstance->players[i];
@@ -121,6 +121,37 @@ static void ChangeBlueOBJProperties(Item::ObjProperties* dest, const Item::ObjPr
     }
 }
 kmCall(0x80790b74, ChangeBlueOBJProperties);
+
+// Documented version of B_squo's code
+u32 ShowTimerInMulti() {
+    u32 enabled = CTRL_EXTRA_SCORE | CTRL_LAP | CTRL_ITEM_WINDOW | CTRL_RANK_NUM | CTRL_MAP | CTRL_COUNTDOWN;
+    if (isFrontrunFrenzy) enabled |= CTRL_TIMER;
+    return enabled;
+}
+kmWritePointer(0x808be360, &ShowTimerInMulti); // overrides VSMultiHUD::GetEnabledCtrlRaceBases()
+
+/*
+void BlockLapEndRace(RaceinfoPlayer* rip, const Timer& finishTime, bool hasNoCameras, u32 r6) {
+    if (isFrontrunFrenzy) return;
+    rip->EndRace(finishTime, hasNoCameras, r6);
+}
+
+kmCall(0x80534c20, BlockLapEndRace);
+
+/*
+bool BlockForceRaceEnd(GMDataVS* gmd) {
+    if (isFrontrunFrenzy) return false;
+    bool ret = GMDataVS::CanRaceEndReal(gmd);
+    if (ret) {
+        OS::Report("end?");
+    } else {
+        OS::Report("dont end?");
+    }
+    return ret;
+}
+
+kmWritePointer(0x808b3428, &BlockForceRaceEnd);
+*/
 
 }//namespace Race
 }//namespace Pulsar

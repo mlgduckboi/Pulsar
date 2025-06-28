@@ -9,7 +9,12 @@ namespace Pulsar {
 namespace Race {
 
 ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position, bool isHuman, bool hasTripleItem, Item::Player* itemHolderPlayer) {
-    if (Pulsar::Race::isFrontrunFrenzy) { return BLUE_SHELL; }
+    if (Pulsar::Race::isFrontrunFrenzy) { 
+        if (position < 4) {
+            return MUSHROOM;
+        }
+        return BLUE_SHELL;
+    }
     ItemId item = itemSlotData->DecideItem(itemBoxType, position, isHuman, hasTripleItem, itemHolderPlayer);
     OS::Report("Decided %d\n", item);
     //return static_cast<ItemId>(0x20);

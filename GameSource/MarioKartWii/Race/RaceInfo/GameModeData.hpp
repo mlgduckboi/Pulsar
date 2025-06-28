@@ -30,7 +30,9 @@ class GMDataGP : public GMData {
 }; //0xc
 
 class GMDataVS : public GMData {
+public:
     bool CanRaceEnd() override; //0x8 80536054 vtable 808b3420
+    static bool CanRaceEndReal(GMDataVS* self); // 80536054
 }; //0x8
 
 class GMDataTT : public GMData { //also used 

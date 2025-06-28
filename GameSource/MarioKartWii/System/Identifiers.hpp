@@ -1,6 +1,22 @@
 #ifndef _IDENTIFIERS_
 #define _IDENTIFIERS_
 
+enum EnabledCtrlRaceBitfield {
+    CTRL_RANK_NUM        = 0x0010,
+    CTRL_LAP             = 0x0020,
+    CTRL_ITEM_WINDOW     = 0x0040,
+    CTRL_POINTS_BATTLE   = 0x0080,
+    CTRL_COUNTDOWN       = 0x0004,
+    CTRL_TIMER           = 0x0002,
+    CTRL_MAP             = 0x0008,
+    CTRL_ADDPOINT_GLOBAL = 0x2000,
+    CTRL_EXTRA_SCORE     = 0x0800,
+    CTRL_TIMEDIFF_GHOST  = 0x0100,
+    CTRL_GHOST_MESSAGE   = 0x1000,
+    CTRL_WIFI_MESSAGES   = 0x0200,
+    CTRL_DEBUG_INFO      = 0x0400
+};
+
 enum KartId {
     STANDARD_KART_S = 0x00,
     STANDARD_KART_M = 0x01,

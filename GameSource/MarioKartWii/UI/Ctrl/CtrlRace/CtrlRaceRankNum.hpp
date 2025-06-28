@@ -10,6 +10,7 @@ public:
     ~CtrlRaceRankNum() override; //807f4de0 vtable 808d3e98
     void Init() override; //0xc 807f48fc
     void OnUpdate() override; //0x1c 807f4a08
+    static void OnUpdateReal(CtrlRaceRankNum* self); // 807f4a08
     const ut::detail::RuntimeTypeInfo* GetRuntimeTypeInfo() const override; //0x28 807f4e3c
     const char* GetClassName() const override; //0x2c 807f48f0
     bool IsInactive() override; //0x48 807f4d40

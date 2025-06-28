@@ -1,3 +1,5 @@
+CoinMgr_MakeCoins__Q26Pulsar4RaceFPUcPi = 0x8087bacc
+
 ##C lib##
 memcpy = 0x80005f34
 memset = 0x80006038
@@ -748,6 +750,9 @@ Vanish__14RaceinfoPlayerFv = 0x80534c78
 EndRace__14RaceinfoPlayerFRC5TimerbUi = 0x805347f4
 FillTimerWithSplits__14RaceinfoPlayerFUcP5Timer = 0x8053572c
 
+#GMDataVS
+CanRaceEndReal__8GMDataVSFP8GMDataVS = 0x80536054
+
 ##RKSYS
 #NAND
 sInstance__Q24NAND7Manager = 0x809bd720
@@ -1240,6 +1245,7 @@ maxDistanceNames__12RaceBalloons = 0x808d3e14
 
 #CtrlRaceRankNum
 IsInactive__15CtrlRaceRankNumFv = 0x807f4d40
+OnUpdateReal__15CtrlRaceRankNumFP15CtrlRaceRankNum = 0x807f4a08
 
 #CtrlResult
 FillName__14CtrlRaceResultFUc = 0x807f52f4
