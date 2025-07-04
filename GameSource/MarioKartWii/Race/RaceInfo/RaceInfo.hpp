@@ -62,7 +62,7 @@ public:
     void Init(); //80534194
     u8 UpdateGPHiddenScore(); //805368f8
     void FillTimerWithSplits(u8 lap, Timer* timer); //8053572c
-    void UpdateRealLocal(); //805342e8 inlined
+    void UpdateRealLocal(); //805342e8 inlined | actually pretty sure this is EndRace wrapper for when bots get force finished
     void EndLap(); //805349b8
     void EndRace(const Timer& finishTime, bool hasNoCameras, u32 r6); //805347f4
     void Vanish(); //80534c78 for example when a ghost ends its race
@@ -95,6 +95,7 @@ public:
       0x40 is coming last animation?
       0x20 is finishing the race?
       0x10 is a dc?
+      0x8 in race but dcd?
       0x4 is driving wrong way
       0x2 is end of race camera
       0x1 is in race?

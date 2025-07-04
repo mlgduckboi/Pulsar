@@ -30,9 +30,9 @@ void DetectKOMode() {
 RaceLoadHook detectKOmode(DetectKOMode);
 
 void EndLapHook(RaceinfoPlayer raceInfoPlayer) {
-    OS::Report("finished lap %d in place %d, with completion %f\n", raceInfoPlayer.currentLap, raceInfoPlayer.position, raceInfoPlayer.raceCompletion);
+    //OS::Report("finished lap %d in place %d, with completion %f\n", raceInfoPlayer.currentLap, raceInfoPlayer.position, raceInfoPlayer.raceCompletion);
     //Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
-    if (isKOmode && (raceInfoPlayer.currentLap % lapsPerKO == 0) && (raceInfoPlayer.position > (12 - ((raceInfoPlayer.currentLap - graceLaps) / lapsPerKO) * numKOs))) {
+    if (isKOmode && ((raceInfoPlayer.currentLap - graceLaps) % lapsPerKO == 0) && (raceInfoPlayer.position > (12 - ((raceInfoPlayer.currentLap - graceLaps) / lapsPerKO) * numKOs))) {
         /*raceInfoPlayer.raceFinishTime->minutes = 60 + raceInfoPlayer.position;
 	    raceInfoPlayer.raceFinishTime->seconds = 0;
 	    raceInfoPlayer.raceFinishTime->milliseconds = 0;*/
@@ -121,7 +121,6 @@ void BlockRacePosition(CtrlRaceRankNum* crrn) {
     raceComp -= lapCount;
     //OS::Report("lapcomp %f\n", raceComp);
     if (lapCount > 0) { // if we're at the end of the lap
-        OS::Report("%d %d\n", lapCount, finalLap);
         crrn->isHidden = (
                             (raceComp > .91) 
                             && ((lapCount == finalLap)

@@ -4,6 +4,8 @@
 #include <MarioKartWii/Item/ItemPlayer.hpp>
 #include <MarioKartWii/Item/PlayerObj.hpp>
 #include <Race/FrontRunFrenzy.hpp>
+#include <Race/KnockoutVS.hpp>
+#include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -15,15 +17,28 @@ ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position
         }
         return BLUE_SHELL;
     }
+    if (true) { // TODO: make distance based item placement a setting
+        Raceinfo* ri = Raceinfo::sInstance;
+        u8 pidFirst = ri->playerIdInEachPosition[0];
+        u8 idxLast = 11;
+        if (Pulsar::Race::isKOmode) {
+            RaceinfoPlayer* rip = ri->players[itemHolderPlayer->id];
+            idxLast -= (int((rip->currentLap - (graceLaps + 1)) / lapsPerKO) * numKOs);
+            OS::Report("gave player on lap %d, in pos %d, a \"last place\" %d\n", rip->currentLap, position, idxLast);
+        }
+        u8 pidLast = ri->playerIdInEachPosition[idxLast];
+        float distFromFirstToLast = ri->players[pidFirst]->raceCompletion - ri->players[pidLast]->raceCompletion;
+        float positionRelative = (ri->players[pidFirst]->raceCompletion - ri->players[itemHolderPlayer->id]->raceCompletion) / distFromFirstToLast;
+        position = 1 + static_cast<u8>(positionRelative * 11);
+        OS::Report("relative pos of %d\n", position);
+    }
     ItemId item = itemSlotData->DecideItem(itemBoxType, position, isHuman, hasTripleItem, itemHolderPlayer);
-    OS::Report("Decided %d\n", item);
     //return static_cast<ItemId>(0x20);
     return item;
 }
 kmCall(0x807BA160, DecideItem);
 
 void CustomItemUseLogic(Item::PlayerObj po, bool isRemote) {
-    OS::Report("item used!\n");
     if (po.itemPlayer->inventory.currentItemId == 0x20) {
         po.itemPlayer->UseBullet();
         return;

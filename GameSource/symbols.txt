@@ -1,4 +1,5 @@
 CoinMgr_MakeCoins__Q26Pulsar4RaceFPUcPi = 0x8087bacc
+FindClosestCollisionEntry__13KCLTypeHolderF11KCLBitfield = 0x807bd96c
 
 ##C lib##
 memcpy = 0x80005f34
@@ -822,6 +823,8 @@ DeleteMii__8MiiGroupFUc = 0x805faa84
 ##KART
 #KartCollision
 CheckKartCollision__Q24Kart9CollisionFRCQ24Kart6Player = 0x8056f7f0
+ProcessFloor__Q24Kart9CollisionFRQ24Kart13CollisionDataPQ24Kart6HitboxPvRC13KCLTypeHolderb = 0x8056ea04
+closestEntry__14CollisionEntry = 0x809c3bdc
 
 #KartBRRESHandle
 __ct__Q24Kart11BRRESHandleFP5LightbUc = 0x80576b3c

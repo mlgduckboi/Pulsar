@@ -13,7 +13,6 @@ namespace Pulsar {
 namespace Race {
 
 RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
-    Pulsar::Race::numKOs;
     u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
     Laps lapSetting = static_cast<Laps>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_LAPS));
     Mode mode = static_cast<Mode>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_SCROLL_MODE));
@@ -108,11 +107,23 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
 }
 kmCall(0x8058f670, ApplySpeedModifier);
 
-kmWrite32(0x805336B8, 0x60000000);
-kmWrite32(0x80534350, 0x60000000);
-kmWrite32(0x80534BBC, 0x60000000);
-kmWrite32(0x80723D10, 0x281D0009);
-kmWrite32(0x80723D40, 0x3BA00009);
+kmWrite32(0x805336B8, 0x60000000); // GetLapCount
+kmWrite32(0x805336d0, 0x60000000); // noop capped lap count
+
+kmWrite32(0x80534350, 0x60000000); // RaceinfoPlayer_EndSpecial
+kmWrite32(0x80534368, 0x60000000); // noop capped lap count
+
+kmWrite32(0x80534BBC, 0x60000000); // RaceinfoPlayer_EndLap
+kmWrite32(0x80534bd4, 0x60000000); // noop capped lap count
+
+kmWrite32(0x80723D10, 0x281D0009); // LakituPlayer_OnLapStart
+kmWrite32(0x80723D40, 0x3BA00009); // Sets max texture value to 9 instead of 5
+
+kmWrite32(0x80534cf4, 0x60000000); // RaceinfoPlayer_UnkEndRace
+kmWrite32(0x80534d0c, 0x60000000); // noop capped lap count
+
+// adapted based off fkw, pervents crash on finishing race with lap count > 8
+kmWrite32(0x80534398, 0x60000000); // force interpolated finish time for bots  or DNFs ( i think ).
 
 kmWrite24(0x808AAA0C, 'PUL'); //time_number -> time_numPUL
 
