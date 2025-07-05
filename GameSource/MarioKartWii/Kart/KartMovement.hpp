@@ -380,6 +380,8 @@ extern float speedRatioCC[4]; //0 50cc 1 100cc 2 150 3 battle
 extern float megaTCSpeed;
 extern float unknown_70;
 extern float mtSpeedMultiplier;
+extern short maxMTCharge;
+extern short maxSMTCharge;
 }//namespace kart
 
 #endif

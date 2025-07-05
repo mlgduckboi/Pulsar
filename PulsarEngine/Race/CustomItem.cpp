@@ -40,7 +40,7 @@ kmCall(0x807BA160, DecideItem);
 
 void CustomItemUseLogic(Item::PlayerObj po, bool isRemote) {
     if (po.itemPlayer->inventory.currentItemId == 0x20) {
-        po.itemPlayer->UseBullet();
+        po.itemPlayer->inventory.RemoveItems(1);
         return;
     }
     po.isNotDragged = true;

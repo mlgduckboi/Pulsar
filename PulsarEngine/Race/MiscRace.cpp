@@ -143,12 +143,13 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
     const bool feather = System::sInstance->IsContext(PULSAR_FEATHER);
     const bool megaTC = System::sInstance->IsContext(PULSAR_MEGATC);
     const char* paneName;
-    if (id == BLOOPER && feather || id == 0x20) {
+    if (id == BLOOPER && feather) {
         if (itemCount == 2) paneName = "feather_2";
         else if (itemCount == 3) paneName = "feather_3";
         else paneName = "feather";
     }
     else if (id == THUNDER_CLOUD && megaTC) paneName = "megaTC";
+    else if (id == 0x20) paneName = "wanwan";
     else paneName = GetItemIconPaneName(id, itemCount);
     return paneName;
 }

@@ -867,6 +867,8 @@ megaTCSpeed__4Kart = 0x808B5CBC
 speedRatioCC__4Kart = 0x808b5cd4
 regularBoostAccel__4Kart = 0x808b5c78
 unknown_70__4Kart = 0x808cb550
+maxMTCharge__4Kart = 0x808b5cc2
+maxSMTCharge__4Kart = 0x808b5cc6
 
 #KartStatus
 UpdateFromInput__Q24Kart6StatusFv = 0x8059487c
