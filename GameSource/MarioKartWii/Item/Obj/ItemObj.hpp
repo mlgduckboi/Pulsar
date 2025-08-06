@@ -85,7 +85,7 @@ public:
     void LoadItemLight(); //807a0380 only for teams
 
     void Init(u32 idx, u16 effectIdx, ItemObjId id); //8079e224
-    void Spawn(ItemObjId objId, u8 playerId, const Vec3& position, bool r7); //8079e550
+    void Spawn(ItemObjId objId, u8 playerId, /*const*/ Vec3& position, bool r7); //8079e550
     void Set(ItemObjId objId); //8079e5f4
 
     //Update

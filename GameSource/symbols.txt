@@ -1,5 +1,21 @@
 CoinMgr_MakeCoins__Q26Pulsar4RaceFPUcPi = 0x8087bacc
 FindClosestCollisionEntry__13KCLTypeHolderF11KCLBitfield = 0x807bd96c
+ReplaceKCLVariant__13KCLTypeHolderFUc = 0x807bdb5c
+maxDist__14CollisionEntry = 0x808a66d4
+closestEntry__14CollisionEntry = 0x809c3bdc
+entriesArray__14CollisionEntry = 0x809c38d8
+entryCount__14CollisionEntry = 0x809c3bd8
+SetUnkItem__Q24Item14PlayerRouletteF6ItemId = 0x807ba5d0
+RegisterNewItem__Q24Item9ObjHolderFPQ24Item3Obj = 0x807961f0
+GenerateItemDirect__Q24Item7ManagerF9ItemObjIdR4Vec3R4Vec3Uc = 0x8079a12c
+OnPlayerCollision__Q24Item3ObjFRQ24Kart6Playerb = 0x807a3790
+Sqrt__Q23EGG4MathFf = 0x8022f80c
+SetScale__Q24Kart4LinkFRC4Vec3 = 0x80591478
+RequestScaleChange__Q24Kart18ScaleAnmControllerFb = 0x8056afb4
+MultiplyScale__Q24Kart3SubFf = 0x80598338
+RequestEndScale__Q24Kart18ScaleAnmControllerFb = 0x8056b168
+ActivateMushroom__Q24Kart8MovementFv = 0x8057f3d8
+OnRouletteEnd__Q24Item14PlayerRouletteFv = 0x807ba2d8
 
 ##C lib##
 memcpy = 0x80005f34
@@ -824,7 +840,7 @@ DeleteMii__8MiiGroupFUc = 0x805faa84
 #KartCollision
 CheckKartCollision__Q24Kart9CollisionFRCQ24Kart6Player = 0x8056f7f0
 ProcessFloor__Q24Kart9CollisionFRQ24Kart13CollisionDataPQ24Kart6HitboxPvRC13KCLTypeHolderb = 0x8056ea04
-closestEntry__14CollisionEntry = 0x809c3bdc
+
 
 #KartBRRESHandle
 __ct__Q24Kart11BRRESHandleFP5LightbUc = 0x80576b3c
@@ -832,6 +848,7 @@ __ct__Q24Kart11BRRESHandleFP5LightbUc = 0x80576b3c
 #KartMovement
 ApplyLightningEffect__Q24Kart8MovementFiii = 0x80580778
 UpdateSlipstream__Q24Kart8MovementFv = 0x80586fa8
+ActivateBullet__Q24Kart8MovementFUc = 0x805858ac
 
 #KartBoost
 Update__Q24Kart5BoostFPb = 0x80588e24
@@ -852,6 +869,20 @@ GetWheelPhysicsHolder__Q24Kart4LinkFUi = 0x80590704
 GetStats__Q24Kart4LinkCFv = 0x80590874
 GetType__Q24Kart4LinkCFv = 0x80590a10
 GetPlayerIdx__Q24Kart4LinkCFv = 0x80590a5c
+GetPosition__Q24Kart4LinkCFv = 0x8059020c
+GetSpeed__Q24Kart4LinkCFv = 0x80590d08
+GetPhysics__Q24Kart4LinkFv = 0x805903e0
+SetKartRotation__Q24Kart4LinkFRCQ23EGG5Quatf = 0x80590288
+GetSub__Q24Kart4LinkFv = 0x80590764
+IsCPU__Q24Kart4LinkCFv = 0x80590664
+GetCollision__Q24Kart4LinkFv = 0x8059084c
+ActivateOobNoKCLInfo__Q24Kart9CollisionFbbi = 0x80573ec4
+GetDamage__Q24Kart4LinkFv = 0x80590d20
+ApplyPOWDamage__Q24Kart6DamageFUi = 0x80568064
+GetMovement__Q24Kart4LinkFv = 0x8059077c
+SetKartPosition__Q24Kart4LinkFRC4Vec3 = 0x80590238
+
+ResetPhysics__Q24Kart3SubFv = 0x8059617c
 
 #KartPlayer
 GetDriftState__Q24Kart6PlayerCFv = 0x805911d8
@@ -876,6 +907,10 @@ ApplyStartBoost__Q24Kart6StatusFi = 0x80595af8
 
 #KartPhyiscsHolder
 Update__Q24Kart18WheelPhysicsHolderFRC4Vec3RC5Mtx34f = 0x8059a278
+
+#KartPhysics
+ResetSpeed__Q24Kart7PhysicsFv = 0x805b4d24
+Reset__Q24Kart7PhysicsFv = 0x805b4b54
 
 #KartParams
 sInstance__10KartParams = 0x809c1918
@@ -1665,6 +1700,8 @@ DecidePrivateTeams__Q25RKNet13SELECTHandlerFRUi = 0x80662588
 __ct__Q23EGG14EffectResourceFPvPv = 0x80225c98
 Reset__Q27Effects3MgrFv = 0x8067b8f0
 Update__10EffectsMgrFv = 0x8067cb88
+sInstance__Q27Effects3Mgr = 0x809c21d0
+CreateSpinEffect__Q27Effects6PlayerFQ34Kart6Damage8SpinTypeb = 0x806a67f8
 
 #EffectsPlayer
 __ct__Q27Effects6PlayerFPQ24Kart6Player = 0x8068df98
@@ -1748,6 +1785,7 @@ UseMegaMushroom__Q24Item6PlayerFv = 0x807a9e50
 Update__Q24Item7ManagerFv = 0x80799850
 sInstance__Q24Item7Manager = 0x809c3618
 IsThereCapacityForItem__Q24Item7ManagerF6ItemId = 0x80799be8
+CreateItemDirect__Q24Item7ManagerF9ItemObjIdR4Vec3R4Vec3Uc = 0x80799fbc
 
 #ItemEVENT
 FillOrExtractShootPos__Q24Item11EVENTBufferFPsP4Vec3b = 0x8079ad38
@@ -1759,6 +1797,7 @@ LoadGraphicsImplicitBRRESNoFunc__Q24Item3ObjFPCcPCcPQ34Item3Obj8AnmParamQ44nw4r3
 LoadGraphicsImplicitBRRES__Q24Item3ObjFPCcPCcUcPQ34Item3Obj8AnmParamQ44nw4r3g3d6ScnMdl12BufferOptionPv = 0x8079ffdc
 LoadGraphics__Q24Item3ObjFPCcPCcPCcUcPQ34Item3Obj8AnmParamQ44nw4r3g3d6ScnMdl12BufferOptionPvUi = 0x807a0040
 DeployBlooper__Q24Item8GessoMgrFUs = 0x807a9128
+Spawn__Q24Item9ObjHolderFUiPPQ24Item3ObjUcR4Vec3b = 0x80795e04
 
 #ItemSlot
 DecideItem__Q24Item12ItemSlotDataFUsUcbbPQ24Item6Player = 0x807bb42c
@@ -1770,6 +1809,10 @@ CanItemNotBeObtained__Q24Item12ItemSlotDataF9ItemObjIdb = 0x807bb380
 Update__Q24Item15PlayerInventoryFv = 0x807bc6e8
 SetItem__Q24Item15PlayerInventoryF6ItemIdb = 0x807bc940
 RemoveItems__Q24Item15PlayerInventoryFUi = 0x807bc97c
+RegisterLostItems__Q24Item15PlayerInventoryFv = 0x807bc170
+LoseItemFromDmg__Q24Item15PlayerInventoryFv = 0x807bc610
+ClearAll__Q24Item15PlayerInventoryFv = 0x807bc9c0
+DecideItem__Q24Item6PlayerFUsUsUi = 0x80798c38
 
 #Misc
 greenShellSpeed__4Item = 0x808a5dc0

@@ -4,6 +4,7 @@
 //Formerly PlayerSub10
 #include <kamek.hpp>
 #include <MarioKartWii/Kart/KartLink.hpp>
+#include <MarioKartWii/Kart/KartScaleController.hpp>
 
 namespace Kart {
 
@@ -252,7 +253,7 @@ public:
     float unknown_0x160; //0x160
     Vec3 scale; //0x164
     float unknown_0x170;
-    float someScale;
+    float netScale;
     float shockSpeedMultiplier;
     float megaScale;
     u8 unknown_0x180[0x188 - 0x180];
@@ -286,7 +287,8 @@ public:
     u8 unknown_0x254[0x258 - 0x254];
     Trick* trick; //0x258
     Zipper* zipper; //0x25c
-    u8 unknown_0x260[0x288 - 0x260];
+    ScaleAnmController* scaleController;
+    u8 unknown_0x264[0x288 - 0x264];
     float rawTurn;
     float unknown_0x28c;
     s16 ghostVanishTimer;
@@ -302,6 +304,7 @@ public:
     static s16 blooperDuration; //808b5bb4, 808b12f4 ntsc-u
     static s16 GetStarDuration(); //80589024
 }; //Total size 0x294
+//size_assert(Kart::Movement, 0x294);
 
 class MovementRemote : public Movement {
 public:

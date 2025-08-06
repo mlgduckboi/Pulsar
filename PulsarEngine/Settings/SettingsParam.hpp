@@ -87,6 +87,9 @@ enum KOSettings {
 
 enum TestSettings {
     SETTINGTEST_RADIO_FPS = 0,
+    SETTINGTEST_RADIO_RELITEM = 1,
+    SETTINGTEST_RADIO_NODRAG = 2,
+    SETTINGTEST_RADIO_CUSTOMITEM = 3,
     SETTINGTEST_SCROLL_LAPS = 0 + 6,
     SETTINGTEST_SCROLL_MODE = 1 + 6,
 };
@@ -239,6 +242,21 @@ enum FPS {
     FPS_60,
 };
 
+enum RelItem {
+    RELITEM_DISABLED,
+    RELITEM_ENABLED,
+};
+
+enum NoDrag {
+    NODRAG_DISABLED,
+    NODRAG_ENABLED,
+};
+
+enum CustomItem {
+    CUSTOMITEM_DISABLED,
+    CUSTOMITEM_ENABLED,
+};
+
 enum Laps {
     LAPS_DEFUALT,
     LAPS_ONE,
@@ -256,8 +274,8 @@ enum Mode {
     MODE_DEFAULT,
     MODE_KO,
     MODE_FR_FRENZY,
-    MODE_3,
-    MODE_4,
+    MODE_SUPERSONIC,
+    MODE_NUKES,
 };
 
 //KOVS Settings

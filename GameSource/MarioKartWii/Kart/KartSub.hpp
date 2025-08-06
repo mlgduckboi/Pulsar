@@ -23,6 +23,7 @@ public:
     void InitEntity(Pointers& pointers); //8059828c
     void ResetPhysics(); //8059617c
     void InitParts(); //80595f78
+    void MultiplyScale(float scale); //80598338
 
     virtual ~Sub(); //offset 0xc 80598ac8 vtable 808b659c
     virtual void Init(const Values& values); //0xc 80595d48

@@ -16,6 +16,7 @@
 #include <MarioKartWii/Item/Obj/ObjProperties.hpp>
 #include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
 #include <Race/FrontRunFrenzy.hpp>
+#include <Race/KnockoutVS.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -27,7 +28,7 @@ bool isFrontrunFrenzy = false;
 
 void ResetScores() {
     prevPidInFirst = 0;
-    timestampEnteredFirst = 0;
+    timestampEnteredFirst = -1;
     for (int i = 0; i < 12; ++i) {
         times[i] =  0;
     }
@@ -50,39 +51,58 @@ void timestampToTimer(Timer& t, u32 timestamp) {
 void UpdateCtrlRaceTime(CtrlRaceTime* crt) {
     if (isFrontrunFrenzy) { crt->maxLap = CtrlRaceTime::GetPlayerMaxLap(crt->playerId); } // disable lap split showing
     CtrlRaceTime::OnUpdateReal(crt);
+    /*if(crt->flashingFrameCounter != 0) {
+        OS::Report("frames %d\n", crt->flashingFrameCounter);
+    }*/
     if (!isFrontrunFrenzy) {
         return;
     }
-    int pidInFirst = Raceinfo::sInstance->playerIdInEachPosition[0];
-    u32 globalTimestamp = timerToTimestamp(crt->timer);
 
-    if (pidInFirst != prevPidInFirst) {
-        times[prevPidInFirst] += (globalTimestamp - timestampEnteredFirst) / 1000;
-        if (times[prevPidInFirst] > 25) {
-            times[prevPidInFirst] = 25;
-        }
-        timestampEnteredFirst = globalTimestamp;
-        prevPidInFirst = pidInFirst;
-        /*
-        for (int i = 0; i < 12; ++i) {
-            OS::Report("pid %d has score %d\n", i, times[i]);
-        }
-        */
-    }
+    crt->FillTimerGlobal(&crt->timer);
+    if (crt->timer.seconds > 10 || timestampEnteredFirst != -1) {
+        int pidInFirst = Raceinfo::sInstance->playerIdInEachPosition[0];
+        u32 globalTimestamp = timerToTimestamp(crt->timer);
+        if (timestampEnteredFirst == -1) timestampEnteredFirst = globalTimestamp;
 
-    u32 totalTimeInFirst = (globalTimestamp - timestampEnteredFirst) + (times[pidInFirst] * 1000);
-    if (((totalTimeInFirst / 1000) >= 30) && true) {
-        times[pidInFirst] = 30;
-        for (int i = 0; i < 12; ++i) {
-            RaceinfoPlayer* player = Raceinfo::sInstance->players[i];
-            Timer& playerFinishTimer = *(player->raceFinishTime);
-            timestampToTimer(playerFinishTimer, times[i] * 1000);
-            player->EndRace(playerFinishTimer, true, 0);
+        if (pidInFirst != prevPidInFirst) {
+            times[prevPidInFirst] += (globalTimestamp - timestampEnteredFirst) / 1000;
+            if (times[prevPidInFirst] > 35) {
+                times[prevPidInFirst] = 35;
+            }
+            timestampEnteredFirst = globalTimestamp;
+            prevPidInFirst = pidInFirst;
+            /*
+            for (int i = 0; i < 12; ++i) {
+                OS::Report("pid %d has score %d\n", i, times[i]);
+            }
+            */
+        //crt->maxLap -= 1;
+        crt->flashingFrameCounter = 130;
+        crt->type = 3;
+        crt->EnableFlashingAnimation();
         }
+
+        u32 totalTimeInFirst = (globalTimestamp - timestampEnteredFirst) + (times[pidInFirst] * 1000);
+        if (((totalTimeInFirst / 1000) >= 45) && true) {
+            times[pidInFirst] = 45;
+            for (int i = 0; i < 12; ++i) {
+                RaceinfoPlayer* player = Raceinfo::sInstance->players[i];
+                Timer& playerFinishTimer = *(player->raceFinishTime);
+                timestampToTimer(playerFinishTimer, times[i] * 1000);
+                player->EndRace(playerFinishTimer, true, 0);
+            }
+        }
+        timestampToTimer(crt->timer, totalTimeInFirst);
+
+        if (crt->timer.seconds >= 35) {
+            crt->EnableFlashingAnimation();
+        }
+    } else {
+        crt->timer.seconds += 35;
     }
-    timestampToTimer(crt->timer, totalTimeInFirst);
-    crt->timer.seconds = 30 - crt->timer.seconds;
+    crt->timer.seconds = 45 - crt->timer.seconds;
     crt->timer.milliseconds = 0;
+    crt->timer.minutes = 0;
     crt->SetTimer(&(crt->timer));
     return;
 }
@@ -95,6 +115,9 @@ void UpdateControlRaceLap(CtrlRaceLap* crl) {
 }
 kmWritePointer(0x808d3d34, &UpdateControlRaceLap);
 
+//kmWrite32(0x80858170, 0x60000000);
+kmWrite32(0x80858154, 0x2c130001); //change it to use 4 player timer in 2 player
+kmWrite32(0x8085816c,0x40820008);
 /*
 bool AllowAllItems(Item::ItemSlotData* isd, ItemObjId objId, bool r5) {
     bool ret = isd->CanItemNotBeObtained(objId, r5);
@@ -117,10 +140,21 @@ kmCall(0x8072fda4, AlwaysCapacityForItem);
 static void ChangeBlueOBJProperties(Item::ObjProperties* dest, const Item::ObjProperties& rel){
     new (dest) Item::ObjProperties(rel);
     if (isFrontrunFrenzy) {
-        dest->limit = 30;
+        dest->limit = 50;
     }
 }
 kmCall(0x80790b74, ChangeBlueOBJProperties);
+
+static void ChangeBombOBJProperties(Item::ObjProperties* dest, const Item::ObjProperties& rel){
+    new (dest) Item::ObjProperties(rel);
+    if (isNukes){
+        dest->limit = 50;
+    } else {
+        dest->limit = 12;
+    }
+}
+
+kmCall(0x80790bb4, ChangeBombOBJProperties);
 
 // Documented version of B_squo's code
 u32 ShowTimerInMulti() {

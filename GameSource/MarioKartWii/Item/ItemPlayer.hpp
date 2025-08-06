@@ -25,6 +25,7 @@ public:
     void OnRouletteEnd(); //807ba2d8
     //r4 is the GOBJ setting (either player or CPU based on isHuman bool), position means different things based on gamemode ofc
     void DecideItem(u16 itemBoxType, u8 position, bool isHuman, u32 lotteryType); //807b9fb0
+    void SetUnkItem(ItemId item); //807ba5d0
     Player* itemPlayer;
     u32 isTheRouletteSpinning;
     u32 frames; //how many frames has the roulette been spinning for
@@ -33,7 +34,8 @@ public:
     ItemId currentRandomItem; //0x18
     ItemId nextRandomItem; //0x1c
     ItemId nextItemId; //0x20
-    u32 unknown_0x24;
+    ItemId unkItem; //0x24 only use when there isnt actually item in inventory 
+    // (ie dragging single, used bullet, tc)
     u16 setting;
     u8 position;
     u8 unknown_0x2B[0x2e - 0x2b];
@@ -53,6 +55,7 @@ public:
     void ClearAll(); //807bc9c0
     void LoseItemFromDmg(); //807bc610
     void EjectItems(); //807bc350 when items are lost due to dmg, they fly out
+    void RegisterLostItems(); //807bc170
 
     Player* itemPlayer;
     ItemId currentItemId; //0x4
@@ -78,6 +81,7 @@ public:
     void UseBlooper(); //807a81b4
     void UsePow(); //807b1b2c
     void UseBullet(); //807a9afc
+    void ActivateBullet(); //807986e4 just a wrapper of Kart::Movement's method
     void UseMushroom(); //807a9d3c
     void UseMegaMushroom(); //807a9e50
     void UseGoldenMushroom(); //807a9f64

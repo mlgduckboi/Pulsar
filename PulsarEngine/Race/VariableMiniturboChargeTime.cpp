@@ -16,14 +16,14 @@ s32 GetChargeBonus(Kart::Movement* km) {
 
 s32 GetVariableMTMaxCharge(Kart::Movement* km) {
     s32 a = Kart::maxMTCharge + GetChargeBonus(km);
-    OS::Report("mt max %d\n", a);
+    //OS::Report("mt max %d\n", a);
     return a;
 }
 kmBranch(0x8057efe0, GetVariableMTMaxCharge);
 
 s32 GetVariableSMTMaxCharge(Kart::Movement* km) {
     s32 a = Kart::maxSMTCharge + GetChargeBonus(km);
-    OS::Report("smt max %d\n", a);
+    //OS::Report("smt max %d\n", a);
     return a;
 }
 kmBranch(0x8057efec, GetVariableSMTMaxCharge);
@@ -47,17 +47,20 @@ asmFunc PatchMTChargeTimeKart() {
         slwi    r4, r4, 2;
 
         subf r8, r4, r8;      // charge time = original - 2 * mt stat
-
+        blr;
+/*
         lis r12, 0x8057;
         ori r12, r12, 0xee80;
         mtctr r12;
         bctr;
+*/      
     )
 }
 /*
 
 */
 kmBranch(0x8057ee7c, PatchMTChargeTimeKart);
+kmPatchExitPoint(PatchMTChargeTimeKart, 0x8057ee80);
 
 asmFunc PatchMTChargeTimeBike() {
     ASM(
@@ -78,14 +81,18 @@ asmFunc PatchMTChargeTimeBike() {
         slwi    r4, r4, 2;
 
         subf r8, r4, r8;      // charge time = original - 2 * mt stat
-
+        blr;
+/*
         lis r12, 0x8058;
         ori r12, r12, 0x88a4;
         mtctr r12;
         bctr;
+*/
     )
 }
 kmBranch(0x805888a0, PatchMTChargeTimeBike);
+kmPatchExitPoint(PatchMTChargeTimeBike, 0x805888a4);
+
 //kmCall(0x805888a0, PatchMTChargeTime);
 
 
@@ -108,14 +115,17 @@ asmFunc PatchSMTChargeTime() {
         slwi    r4, r4, 2;
 
         subf r8, r4, r8;      // charge time = original - 2 * mt stat
-
+        blr;
+/*
         lis r12, 0x8057;
         ori r12, r12, 0xef30;
         mtctr r12;
         bctr;
+*/
     )
 }
 kmBranch(0x8057ef2c, PatchSMTChargeTime);
+kmPatchExitPoint(PatchSMTChargeTime, 0x8057ef30);
 } // extern C
 
 }

@@ -48,17 +48,28 @@ static bool ConditionalIgnoreInvisibleWalls(float radius, CourseMgr& mgr, const 
     KCLBitfield acceptedFlags, CollisionInfo* info, KCLTypeHolder& kclFlags)
 {
     if(System::sInstance->IsContext(PULSAR_FEATHER)) {
-        register Kart::Collision* collision;
+        /*register Kart::Collision* collision;
         asm(mr collision, r15;);
         Kart::Status* status = collision->pointers->kartStatus;
         if(status->bitfield0 & 0x40000000 && status->jumpPadType == 0x7) {
             acceptedFlags = static_cast<KCLBitfield>(acceptedFlags & ~(1 << KCL_INVISIBLE_WALL));
         }
-        //to remove invisible walls from the list of flags checked, these walls at flag 0xD and 2^0xD = 0x2000*
+        //to remove invisible walls from the list of flags checked, these walls at flag 0xD and 2^0xD = 0x2000**/
     }
-    return mgr.IsCollidingAddEntry(position, prevPosition, acceptedFlags, info, &kclFlags, 0, radius);
+    bool ret = mgr.IsCollidingAddEntry(position, prevPosition, acceptedFlags, info, &kclFlags, 0, radius);
+    if (ret) {
+        //OS::Report("looking for: 0x%x, found 0x%x, %d\n", acceptedFlags, static_cast<u32>(kclFlags.bitfield), ret);
+        //OS::Report("found 0x%x\n", static_cast<u32>(kclFlags.bitfield));
+        //if ((static_cast<u32>(kclFlags.bitfield) & ~0x20e80fff) > 0) {
+            //kclFlags.bitfield = KCL_BITFIELD_JUMP_PAD;
+            //kclFlags.ReplaceKCLVariant(4);
+        //}
+    }
+    return ret;
 }
 kmCall(0x805b68dc, ConditionalIgnoreInvisibleWalls);
+kmCall(0x805b7028, ConditionalIgnoreInvisibleWalls);
+kmCall(0x8088ad74, ConditionalIgnoreInvisibleWalls);
 
 u8 ConditionalFastFallingBody(const Kart::Sub& sub) {
     if(System::sInstance->IsContext(PULSAR_FEATHER)) {

@@ -12,7 +12,7 @@ namespace Pulsar {
 namespace Race {
 
 // mostly a cpp version of clf's fkw rampup with minor modifications
-
+/*
 void ApplyNewFactorToPlayer(Kart::Stats* stats, float factor) {
     //stats->baseSpeed *= factor;
     stats->standard_acceleration_as[0] *= factor;
@@ -63,6 +63,7 @@ void RampUpSpeed(RaceinfoPlayer raceInfoPlayer) {
     OS::Report("hardspeedcap: %f (player %d: %f soft: %f)\n", Kart::hardSpeedCap, raceInfoPlayer.id, movement->hardSpeedLimit, movement->softSpeedLimit);
     OS::Report("min drift speed %f\n", Kart::minDriftSpeedRatio);
 }
+*/
 
 }//namespace Race
 }//namespace Pulsar

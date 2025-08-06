@@ -41,7 +41,7 @@ struct StatsParamFile {
         float automaticDrift;
         float driftReactivity;
         float targetAngle;
-        float unknown_0x68;
+        float postDriftCorrection;
         u32 mt;
         float speedFactors[32];
         float handlingFactors[32];

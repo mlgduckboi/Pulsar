@@ -25,7 +25,7 @@ struct KCLTypeHolder {
 struct CollisionEntry {
     static CollisionEntry entriesArray; //809c38d8
     static u32 entryCount; //809c3bd8
-    static u32 maxCount; //0x40
+    static float maxDist; //808a66d4
     static CollisionEntry* closestEntry; //809c3bdc
     KCLTypeHolder type;
     u16 kclFlag; //0x4

@@ -55,7 +55,7 @@ public:
 
     Link();	//8059018c
     void SetPointersFromPlayer(u8 playerId);	//805901d0
-    const Vec3& GetPosition() const;	//8059020c
+    /*const*/ Vec3& GetPosition() const;	//8059020c
     void SetKartPosition(const Vec3& position);	//80590238
     const Mtx34& GetMtx() const;	//80590264
     const Mtx34& GetBodyMtx() const; //80590278
@@ -141,7 +141,7 @@ public:
     const Vec3& GetBodyMatCol1() const; //80590cd0
     const Vec3& GetBodyMatCol2() const; //80590ce4
     float GetEngineSpeed() const; //80590cf8
-    const Vec3& GetSpeed() const;	//80590d08
+    /*const*/ Vec3& GetSpeed() const;	//80590d08
     Damage& GetDamage();	//80590d20
     const Damage& GetDamage() const;	//80590d2c
     void Func80590d38(const Vec3& src); //80590d38 sets a vec in KartDamage

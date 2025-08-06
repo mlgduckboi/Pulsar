@@ -50,6 +50,7 @@ public:
     int HandleStarCollision(); //80573224
     int HandleFibCollision(); //8057325c
     void ActivateOob(bool detachCamera, KCLTypeHolder* flags, bool isCPU, int isInBullet); //80573b00
+    void ActivateOobNoKCLInfo(bool detachCamera, bool isCPU, int isInBullet); //80573ec4
     void UpdateRespawn(); //80573ed4
     void UpdateCollisionsInner(u32 playerIdx, Physics& kartPhysics, HitboxGroup* hitboxGroup,
         Quat* rotation, const Vec3& scale, bool enableHwg, Vec3* unk2, float unk0, float unk1); //805b6724 everything but the wheels, ie the body

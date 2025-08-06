@@ -35,7 +35,7 @@ kmWrite32(0x8057efb4, 0x48000028); //skips the SMT charge check and sends uncond
 void CreateUMT(Kart::Movement& movement) {
     bool isUMTs = System::sInstance->IsContext(PULSAR_UMTS);
     const s16 smtCharge = movement.smtCharge;
-    OS::Report("smt charge %d, bonus %d, total %d\n", smtCharge, GetChargeBonus(&movement), 550 + GetChargeBonus(&movement));
+    //OS::Report("smt charge %d, bonus %d, total %d\n", smtCharge, GetChargeBonus(&movement), 550 + GetChargeBonus(&movement));
     if((smtCharge >= (550 + (2 * GetChargeBonus(&movement)))) && isUMTs) movement.driftState = 4;
     else if(smtCharge >= GetVariableSMTMaxCharge(&movement)) movement.driftState = 3;
 };

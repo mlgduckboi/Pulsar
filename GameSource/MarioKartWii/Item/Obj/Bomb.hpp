@@ -35,12 +35,27 @@ public:
 
     void UpdateThunk(); //807a3900
     void Update(); //807a4cdc
-
-    u8 unknown_0x1c4[0x1c4 - 0x1a4];
+    // float 1a0
+    // vtable 1a4
+    // u16 1a8 state
+    // u16? padding 1aa
+    // u32 1ac nextState
+    // u32 0x1b0 timer
+    // u16* ptmfIdxArray 0x1b4
+    // u16 padding? 0x1b6
+    // ptr ptrToStructContainingPtmfArray 0x1b8
+    // u32 padding 0x1bc
+    // Obj* 0x1c0  pointer to self?
+    Team teamId; //0x1c4
+    u8 padding_0x1c8[0x1cc - 0x1c8]; 
+    void* unk_ptr_0x1cc; // 0x1 model related?
+    float proximityCheck;
     ModelDirector* bombCore; //0x1d4
     u8 unknown_0x1d8[0x4];
     u32 timer; //0x1dc how long a bomb lasts before exploding
-    u8 unknown_0x1e0[0x1f0 - 0x1e0];
+    u32 otherTimer_0x1e0;
+    u8 unknown_0x1e4[0x1ec - 0x1e4];
+    u32 tetherBreakTimer; //0x1ec set to 0x10e on tether break
 };
 size_assert(ObjBomb, 0x1f0);
 }//namespace Item

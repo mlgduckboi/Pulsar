@@ -51,7 +51,9 @@ public:
     u32 frames; //0x1B0 set to the number of active frames of Parent Page OnDeactivate, and then same on OnDeactivate, but never read?
     u8 unknown_0x1B4[0x1B8 - 0x1B4];
     u32 type; //0x1b8
-    u8 unknown_0x1BC[0x1C0 - 0x1BC];
+    //u8 unknown_0x1BC[0x1C0 - 0x1BC];
+    //u8 unknown_0x1B7[0x1BC - 0x1];  // padding or unknown fields
+    u32 flashingFrameCounter; //0x1bc
     u32 maxLap; //from raceinfoPlayer
 }; //0x1C4
 

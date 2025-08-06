@@ -24,7 +24,7 @@ public:
     bool operator== (State& rhs); //8051e89c
     void SetMotionControlFlick(u8 motionControlFlickUnmirrored); //8051eb68
 
-    u16 buttonActions; //bit flags:
+    u16 buttonActions; //0x4 bit flags:
     /*
     0x1 = accelerate
     0x2 = brake + reverse (used for SSMT)
@@ -34,9 +34,9 @@ public:
     */
     u16 buttonRaw; //0x6 bit flags, vary slightly by controller
     Vec2 stick; //-1.0 to 1.0 //0x8
-    u8 quantisedStickX; //0-14
-    u8 quantisedStickY; //0-14
-    u8 motionControlFlick; //1 up, 2 down, 3 left, 4 right; includes the first frame of d-pad presses
+    u8 quantisedStickX; //0x10 0-14
+    u8 quantisedStickY; //0x11 0-14
+    u8 motionControlFlick; //0x12 1 up, 2 down, 3 left, 4 right; includes the first frame of d-pad presses
     u8 motionControlFlickUnmirrored; //0x13
     u8 unknown_0x14[0x18 - 0x14];
 }; //Total size 0x18

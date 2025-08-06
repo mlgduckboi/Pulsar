@@ -90,14 +90,14 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     for (int i = 0; i < 32; ++i) {
         OS::Report("Handling set to %f\n", slipperyHandling);
         stats->handlingFactors[i] = slipperyHandling;
-    }
+    }*/
 
-    if (stats->type == INSIDE_BIKE) {
-        OS::Report("changing to outside");
-        stats->type = OUTSIDE_BIKE;
-        stats->targetAngle = 0;
+    if (stats->type == KART) {
+        //OS::Report("changing to outside");
+        stats->targetAngle = 35;
+        stats->postDriftCorrection = 1.4;
     }
-    */
+    
 
     Kart::minDriftSpeedRatio = 0.55f * (factor > 1.0f ? (1.0f / factor) : 1.0f);
     Kart::unknown_70 = 70.0f * factor;

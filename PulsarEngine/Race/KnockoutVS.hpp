@@ -9,6 +9,7 @@ extern int numKOs; //3
 extern int graceLaps;
 extern int totalLaps;
 extern bool isKOmode;
+extern bool isNukes;
 
 }//namespace Race
 }//namespace Pulsar

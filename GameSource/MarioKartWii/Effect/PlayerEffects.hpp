@@ -56,7 +56,7 @@ public:
 
     void OnBushCollision(); //806a66a4 creates WeedWall effect, plays bushcollisionsound
 
-    void CreateSpinEffect(Kart::Damage::SpinType spinType, u32 r5); //806a67f8
+    void CreateSpinEffect(Kart::Damage::SpinType spinType, bool unk0); //806a67f8
     //Create = called when the effect should be drawn
     //Update = called every frame and checks for whether the effect should be created
     void UpdateCollisionEffects(); //80697be0 the ones below
@@ -392,6 +392,7 @@ public:
     u32 unknown_0xAE4; //8068ebc8
 }; //total size 0xAE8
 size_assert(Player, 0xae8);
-#endif
 }//namespace Effects
+#endif
+
 

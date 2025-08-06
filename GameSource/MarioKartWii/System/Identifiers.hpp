@@ -1034,12 +1034,12 @@ enum KCLBitfield {
     KCL_BITFIELD_BOOST_PANEL            = 1 << KCL_BOOST_PANEL,           //0x40
     KCL_BITFIELD_BOOST_RAMP             = 1 << KCL_BOOST_RAMP,            //0x80
     KCL_BITFIELD_JUMP_PAD               = 1 << KCL_JUMP_PAD,              //0x100
-    KCL_BITFIELD_ITEM_ROAD              = 1 << KCL_ITEM_ROAD,             //0x200
+    KCL_BITFIELD_ITEM_ROAD              = 1 << KCL_ITEM_ROAD,             //0x200 (unused)
     KCL_BITFIELD_SOLID_FALL             = 1 << KCL_SOLID_FALL,            //0x400
     KCL_BITFIELD_MOVING_WATER           = 1 << KCL_MOVING_WATER,          //0x800
     KCL_BITFIELD_WALL                   = 1 << KCL_WALL,                  //0x1000
     KCL_BITFIELD_INVISIBLE_WALL         = 1 << KCL_INVISIBLE_WALL,        //0x2000
-    KCL_BITFIELD_ITEM_WALL              = 1 << KCL_ITEM_WALL,             //0x4000
+    KCL_BITFIELD_ITEM_WALL              = 1 << KCL_ITEM_WALL,             //0x4000 (unused)
     KCL_BITFIELD_WALL_3                 = 1 << KCL_WALL_3,                //0x8000
     KCL_BITFIELD_FALL_BOUNDARY          = 1 << KCL_FALL_BOUNDARY,         //0x10000
     KCL_BITFIELD_CANNON_TRIGGER         = 1 << KCL_CANNON_TRIGGER,        //0x20000

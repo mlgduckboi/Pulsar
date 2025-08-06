@@ -55,7 +55,7 @@ public:
     float vertical_tilt; //0x4c
     float unknown_0x50;
     float megaScale2; //0x54
-    float vertical_tilt; //0x58 
+    float vertical_tilt2; //0x58 
     float unknown_0x5c;
 
     u32 unknown_0x60;

@@ -143,16 +143,48 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
     const bool feather = System::sInstance->IsContext(PULSAR_FEATHER);
     const bool megaTC = System::sInstance->IsContext(PULSAR_MEGATC);
     const char* paneName;
+    OS::Report("item window with id: %d\n", id);
     if (id == BLOOPER && feather) {
         if (itemCount == 2) paneName = "feather_2";
         else if (itemCount == 3) paneName = "feather_3";
         else paneName = "feather";
     }
+    else if (id == BOBOMB && itemCount > 0) {
+        if (itemCount == 1) paneName = "bomb_1";
+        else if (itemCount == 2) paneName = "bomb_2";
+        else if (itemCount == 3) paneName = "bomb_3";
+        else if (itemCount == 4) paneName = "bomb_4";
+        else if (itemCount == 5) paneName = "bomb_5";
+        else if (itemCount == 6) paneName = "bomb_6";
+        else if (itemCount == 7) paneName = "bomb_7";
+        else if (itemCount == 8) paneName = "bomb_8";
+        else if (itemCount == 9) paneName = "bomb_9";
+        else if (itemCount == 10) paneName = "bomb_10";
+        else paneName = "bomb_1";
+    }
     else if (id == THUNDER_CLOUD && megaTC) paneName = "megaTC";
-    else if (id == 0x20) paneName = "wanwan";
+    //else if (id == MUSHROOM && itemCount == 4) paneName = "wanwan";
+    //else if (id == 0x20) paneName = "wanwan";
+    //else if (id == 0x21) paneName = "wanwan";
+    //else if (id == 0x22) paneName = "wanwan"; //"hanachan" = fireball "hone_ball" = wiggler, "wanwan" = chainchomp
+    else if (id == 0x23 || id == 0x2a) paneName = "deathnote";
+    else if (id == 0x24) paneName = "backwards_b";
+    else if (id == 0x25) paneName = "nuke_button";
+    else if (id == 0x26) paneName = "nuke_mega";
+    else if (id == 0x27) paneName = "nuke_reverse";
+    else if (id == 0x28) paneName = "forg";
+    else if (id == 0x29) paneName = "crazE";
+    else if (id == 0x2b) paneName = "world";
+    else if (id == 0x2c) paneName = "kame_golden";
+    else if (id == 0x2d) paneName = "banana_golden";
+    else if (id == 0x2e) paneName = "ultracut";
+    else if (id == 0x2f) paneName = "boom_shroom";
+    else if (id == 0x22) paneName = "baby_oil";
+    else if (id == 0x21) paneName = "ender_pearl";
     else paneName = GetItemIconPaneName(id, itemCount);
     return paneName;
 }
+
 kmCall(0x807f3648, ChangeItemWindowPane);
 kmCall(0x807ef168, ChangeItemWindowPane);
 kmCall(0x807ef3e0, ChangeItemWindowPane);
