@@ -33,7 +33,7 @@ u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount
     { 7, 0, 0, 0, 0}, //Host
     { 0, 0, 0, 0, 0}, //OTT
     { 4, 4, 0, 0, 0}, //KO
-    { 10, 5, 0, 0, 0}, //Test
+    { 10, 6, 0, 0, 0}, //Test
     { 5, 0, 0, 0, 0}, //KOVS
     //{}, //User
 };

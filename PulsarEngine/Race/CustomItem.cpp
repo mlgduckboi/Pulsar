@@ -286,6 +286,23 @@ ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position
     }*/
     ItemId item = itemSlotData->DecideItem(itemBoxType, position, (isHuman || isFrontrunFrenzy), hasTripleItem, itemHolderPlayer);
     
+    if (isHotPotato) {
+        if (itemHolderPlayer->GetPlayerIdx() == currentHotPotato) {
+            Random* random = DriverMgr::GetRaceinfoRandom();
+            s32 chance = random->NextLimited(100);
+            if (!isHuman) {
+                chance += 25;
+            }
+            if (chance > 95) {
+                item = TRIPLE_RED_SHELL;
+            } else if (chance > 80) {
+                item = RED_SHELL;
+            } else {
+                item = TRIPLE_GREEN_SHELL;
+            }
+        }
+    }
+
     CustomItem customItem = static_cast<CustomItem>(Pulsar::Settings::Mgr::Get().GetUserSettingValue(static_cast<Pulsar::Settings::UserType>(Pulsar::Settings::SETTINGSTYPE_TEST), Pulsar::SETTINGTEST_RADIO_CUSTOMITEM));
     if (!isFrontrunFrenzy && customItem == CUSTOMITEM_ENABLED) {
         Random* random = DriverMgr::GetRaceinfoRandom();

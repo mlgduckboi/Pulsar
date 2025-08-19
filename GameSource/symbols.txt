@@ -16,6 +16,9 @@ MultiplyScale__Q24Kart3SubFf = 0x80598338
 RequestEndScale__Q24Kart18ScaleAnmControllerFb = 0x8056b168
 ActivateMushroom__Q24Kart8MovementFv = 0x8057f3d8
 OnRouletteEnd__Q24Item14PlayerRouletteFv = 0x807ba2d8
+StopStarAnm__Q24Kart4LinkFv = 0x80591038
+ActivateStarAnm__Q24Kart4LinkFv = 0x80590f90
+UpdateStarAnm__Q24Kart4LinkFv = 0x8059102c
 
 ##C lib##
 memcpy = 0x80005f34

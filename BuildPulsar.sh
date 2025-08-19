@@ -45,7 +45,7 @@ WINEDEBUG=-all wine  "$CC" "${CFLAGS[@]}" -c -o "$BUILD/kamek.o" "$ENGINE/kamek.
 OBJECTS=()
 for file in $(find "$PULSAR" -type f -name "*.cpp"); do
   base=$(basename "$file" .cpp)
-  echo "Compiling $file"
+# echo "Compiling $file"
   obj="$BUILD/$base.o"
   if [ ! -f "$obj" ] || [ "$file" -nt "$obj" ]; then
     echo "Compiling $file"

@@ -276,6 +276,7 @@ enum Mode {
     MODE_FR_FRENZY,
     MODE_SUPERSONIC,
     MODE_NUKES,
+    MODE_HOT_POTATO
 };
 
 //KOVS Settings

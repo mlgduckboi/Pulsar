@@ -131,7 +131,7 @@ void CustomPositionTracking() {
         u8 pos = pl->position;
         u8 slot = pos - 1; // zero‑based index in metrics[]
 
-        // -- Branch A: Still racing?`
+        // -- Branch A: Still racing?
         if ((pl->stateFlags & 0x02) == 0) {
             metrics[slot] = pl->raceCompletion;
         }
@@ -144,6 +144,8 @@ void CustomPositionTracking() {
                 u32 total = timer->milliseconds + (timer->seconds + (timer->minutes & 0xFF)* 60)*1000;
                 if (isFrontrunFrenzy) {
                     metrics[slot]  = 600000000+double(total);
+                } else if (isHotPotato) {
+                    metrics[slot]  = -600000000-double(total);
                 } else {
                     metrics[slot]  = 600000000-double(total);
                 }
