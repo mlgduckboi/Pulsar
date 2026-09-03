@@ -266,7 +266,7 @@ static bool CtrlRaceItemWindowIsInactive(const CtrlRaceItemWindow& itemWindow) {
     else { //default behaviour
         bool isValid = true;
         if(itemPlayer.roulette.isTheRouletteSpinning == 0 || itemPlayer.inventory.currentItemId == ITEM_NONE) isValid = false;
-        if(!isValid && itemPlayer.roulette.unknown_0x24 == ITEM_NONE) return true;
+        if(!isValid && itemPlayer.roulette.unkItem == ITEM_NONE) return true;
         return false;
     }
 }

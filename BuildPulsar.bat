@@ -1,58 +1,100 @@
-
-SETLOCAL EnableDelayedExpansion
 @echo off
-cls
-del build\*.o
+setlocal enabledelayedexpansion
 
-::DEBUG only works if you have the map and readelf (which is part of MinGW)
-SET "debug="
-::SET "cwDWARF="
-::if "%1" equ "-d" SET "debug=-debug=0x803992E0 -map=^"Dolphin Emulator\Maps\RMCP01.map^" -readelf=^"C:\MinGW\bin\readelf.exe^""
-::if "%1" equ "-d" SET "cwDWARF=-g"
+REM ==== Compiler and tools ====
+set "CC=.\compiler\mwcceppc.exe"
+set "LINKER=.\KamekLinker\Kamek.exe"
 
-:: Sources and Compiler
-SET "ENGINE=.\KamekInclude"
+REM ==== Project directories ====
+set "ENGINE=.\KamekInclude"
 set "GAMESOURCE=.\GameSource"
-SET "PULSAR=.\PulsarEngine"
+set "PULSAR=.\PulsarEngine"
+set "BUILD=.\build"
 
-:: Change this as necessary depending on where you put CodeWarrior
-SET "CC="
+REM ==== Create build directory if missing ====
+if not exist "%BUILD%" mkdir "%BUILD%"
 
-:: Riivolution Destination (change as necessary)
-SET "RIIVO="
+REM ==== Compiler flags ====
+set "CFLAGS=-I- -i "%ENGINE%" -i "%GAMESOURCE%" -i "%PULSAR%" -opt all -inline auto -enum int -proc gekko -fp hard -sdata 0 -sdata2 0 -maxerrors 1 -func_align 4"
 
-:: Compiler flags and folder
-SET CFLAGS=-I- -i %ENGINE% -i %GAMESOURCE% -i %PULSAR% ^
-  -opt all -inline auto -enum int -proc gekko -fp hard -sdata 0 -sdata2 0 -maxerrors 1 -func_align 4 %cwDWARF%
-SET DEFINE=
+REM ==== Compile kamek.cpp ====
+echo Compiling %ENGINE%\kamek.cpp
+"%CC%" %CFLAGS% -c -o "%BUILD%\kamek.o" "%ENGINE%\kamek.cpp"
+if errorlevel 1 goto :error
 
-if "!CC!" == "" (
-    echo You need to specify the path to CodeWarrior by setting the CC variable
-    exit /b 1
+REM ==== Collect object files ====
+set "OBJECTS="
+
+REM ==== Compile all .cpp files in PULSAR ====
+for /r "%PULSAR%" %%F in (*.cpp) do (
+    set "SRC=%%F"
+    set "BASE=%%~nF"
+    set "OBJ=%BUILD%\!BASE!.o"
+
+    set "NEEDBUILD=1"
+    if exist "!OBJ!" (
+        call :isnewer "!SRC!" "!OBJ!" NEEDBUILD
+    )
+
+    if "!NEEDBUILD!"=="1" (
+        echo Compiling !SRC!
+        "%CC%" %CFLAGS% -c -o "!OBJ!" "!SRC!"
+        if errorlevel 1 goto :error
+    ) else (
+        echo Skipping !SRC! ^(up to date^)
+    )
+
+    set "OBJECTS=!OBJECTS! "!OBJ!""
 )
 
-:: CPP Sources
-SET CPPFILES=
-for /R %PULSAR% %%f in (*.cpp) do SET "CPPFILES=%%f !CPPFILES!"
+REM ==== Compile all .s files in PULSAR ====
+for /r "%PULSAR%" %%F in (*.s) do (
+    set "SRC=%%F"
+    set "BASE=%%~nF"
+    set "OBJ=%BUILD%\!BASE!.o"
 
-:: Compile CPP
-%CC% %CFLAGS% -c -o "build/kamek.o" "%ENGINE%\kamek.cpp"
+    set "NEEDBUILD=1"
+    if exist "!OBJ!" (
+        call :isnewer "!SRC!" "!OBJ!" NEEDBUILD
+    )
 
-SET OBJECTS=
-FOR %%H IN (%CPPFILES%) DO (
-    ::echo "Compiling %%H..."
-    %CC% %CFLAGS% %DEFINE% -c -o "build/%%~nH.o" "%%H"
-    SET "OBJECTS=build/%%~nH.o !OBJECTS!"
+    if "!NEEDBUILD!"=="1" (
+        echo Compiling assembly !SRC!
+        "%CC%" %CFLAGS% -c -o "!OBJ!" "!SRC!"
+        if errorlevel 1 goto :error
+    ) else (
+        echo Skipping assembly !SRC! ^(up to date^)
+    )
+
+    set "OBJECTS=!OBJECTS! "!OBJ!""
 )
 
-:: Link
-echo Linking... %time%
-".\KamekLinker\Kamek.exe" "build/kamek.o" %OBJECTS% %debug% -dynamic -externals="%GAMESOURCE%/symbols.txt" -versions="%GAMESOURCE%/versions.txt" -output-combined=build\Code.pul
+REM ==== Link all object files ====
+echo Linking...
+"%LINKER%" "%BUILD%\kamek.o" %OBJECTS% ^
+  -dynamic ^
+  -externals="%GAMESOURCE%\symbols.txt" ^
+  -versions="%GAMESOURCE%\versions.txt" ^
+  -output-combined="%BUILD%\Code.pul"
+if errorlevel 1 goto :error
 
-if %ErrorLevel% equ 0 if NOT "!RIIVO!" == "" (
-    xcopy /Y build\*.pul "%RIIVO%\Binaries" /i /q
-    echo Binaries copied
+echo Build succeeded.
+goto :eof
+
+REM =========================================================
+REM :isnewer <source> <object> <resultVar>
+REM Sets resultVar=1 if source is newer than object, else 0
+REM Uses PowerShell for reliable timestamp comparison.
+REM =========================================================
+:isnewer
+set "_SRC=%~1"
+set "_OBJ=%~2"
+for /f %%R in ('powershell -NoProfile -Command ^
+  "if ((Get-Item -LiteralPath '%_SRC%').LastWriteTime -gt (Get-Item -LiteralPath '%_OBJ%').LastWriteTime) { '1' } else { '0' }"') do (
+    set "%~3=%%R"
 )
+goto :eof
 
-:end
-ENDLOCAL
+:error
+echo Build failed.
+exit /b 1
