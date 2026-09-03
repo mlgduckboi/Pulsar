@@ -8,6 +8,7 @@
 #include <PulsarSystem.hpp>
 #include <Settings/Settings.hpp>
 #include <Race/KnockoutVS.hpp>
+#include <MarioKartWii/UI/Ctrl/CtrlRace/CtrlRaceBase.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -43,6 +44,7 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
 kmCall(0x805328d4, LoadCustomLapCount);
 
 //kmWrite32(0x80723d64, 0x7FA4EB78);
+kmWrite8(0x808A9CC7, 'f');
 void DisplayCorrectLap(AnmTexPatHolder* texPat) { //This Anm is held by a ModelDirector in a Lakitu::Player
     register u32 maxLap;
     asm(mr maxLap, r29;);
@@ -50,6 +52,71 @@ void DisplayCorrectLap(AnmTexPatHolder* texPat) { //This Anm is held by a ModelD
     return;
 }
 kmCall(0x80723d70, DisplayCorrectLap);
+
+//static u8 friendStatusButtonUsedIdx;
+asmFunc PositionFix() {
+    ASM(
+        nofralloc;
+        mr r3, r30;
+        cmpwi r0, 2;
+        bne+ not2;
+        lis r5, 0xC2B4;
+        b store;
+        not2:
+        cmpwi r0, 10;
+        bne+ not10;
+        lis r5, 0xC2E6;
+        b store;
+        not10:
+        cmpwi r0, 20;
+        bnelr+;
+        lis r5, 0xC307;
+        store:
+        lwz r4, 0xBC(r3);
+        lwz r4, 0x14(r4);
+        lwz r4, 0x14(r4);
+        stw r5, 0x28(r4);
+        blr;
+        )
+}
+kmCall(0x807EF864, PositionFix);
+
+static const char lapLeft[] = "lap_lefft";
+static const char lapRight[] = "lap_riighter";
+
+extern "C" void SetPaneColor(
+    CtrlRaceBase* self,
+    const char* pane,
+    int enable
+) {
+    self->HudSlotColorEnable(pane, enable);
+}
+
+kmBranchDefAsm(0x807EF7E8, 0x807EF7EC) {
+    //ASM(
+        nofralloc;
+        mr r3, r28;
+        lis r4, lapLeft@ha;
+        addi r4, r4, lapLeft@l;
+        li r5, 1;
+        bl SetPaneColor;
+        mr r3, r28;
+        lis r4, lapRight@ha;
+        addi r4, r4, lapRight@l;
+        li r5, 1;
+        bl SetPaneColor;
+        mr r3, r28;
+        blr;
+    //)
+}
+
+kmBranchDefAsm(0x807b1dcc, 0x807b1dd4) {
+    //ASM(
+        nofralloc;
+        li r0, 0x80;
+        blr;
+    //)
+}
 
 //kmWrite32(0x808b5cd8, 0x3F800000); //change 100cc speed ratio to 1.0    
 Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {

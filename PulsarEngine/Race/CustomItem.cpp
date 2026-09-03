@@ -8,6 +8,7 @@
 #include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/Item/ItemBehaviour.hpp>
+#include <MarioKartWii/Item/ItemPlayer.hpp>
 #include <MarioKartWii/Driver/DriverManager.hpp>
 #include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
 #include <MarioKartWii/Race/RaceData.hpp>
@@ -29,6 +30,7 @@ static u32 frogTimer = 0;
 static u8 backwardsBUser = 0;
 static u32 backwardsBTimer = 0;
 static bool invertedThisTick[12];
+static int drift[24];
 
 enum CustomItemId {
     ENDERPEARL         = 0x21,
@@ -180,6 +182,12 @@ Input::ControllerHolder& GetControllerHolder(Kart::Link *link) {
 }
 kmBranch(0x805903f4, GetControllerHolder);
 
+void SetUnkItem(Item::PlayerRoulette* self, ItemId item) {
+    //self->unkItem = item;
+    return;
+}
+kmBranch(0x807ba5d0, SetUnkItem);
+
 void ConditionalStickInvert(Input::RealControllerHolder* rch, bool unk) {
     OS::Report("called\n");
     rch->Update(unk);
@@ -194,6 +202,10 @@ void ConditionalStickInvert(Input::RealControllerHolder* rch, bool unk) {
 //kmWritePointer(0x808b2dc0, ConditionalStickInvert); // this will prob break nstc
 
 void CustomDecideItem(Item::Player* ip, u16 playerItemBoxType, u16 cpuItemBoxType, u32 lotteryType) {
+    /*Item::PlayerInventory& inventory = ip->inventory;
+    inventory.SetItem(POW_BLOCK, false);
+    inventory.currentItemCount = 1;*/
+
     if (isNukes) {
         Item::PlayerInventory& inventory = ip->inventory;
         if (inventory.currentItemCount == 0) {
@@ -634,6 +646,18 @@ void UseBabyOil(Item::PlayerObj& po) {
     //Vec3 scale;
     //scale.x = 1.25;
     //scale.y = 1;
+    //scale.z = 1.25;
+    //po.GetMovement().scaleController->curScale = scale;
+    //po.GetMovement().scaleController->RequestScaleChange(false);
+}
+
+void UseJoycon(Item::PlayerObj& po) {
+    for (int i = 0; i < 12; ++i) {
+        if (i == po.GetPlayerIdx()) continue;
+        Random* random = DriverMgr::GetRaceinfoRandom();
+        drift[i*2] = random->NextLimited(10) - 5;
+        drift[i*2 + 1] = random->NextLimited(10) - 5;
+    }
     //scale.z = 1.25;
     //po.GetMovement().scaleController->curScale = scale;
     //po.GetMovement().scaleController->RequestScaleChange(false);

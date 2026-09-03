@@ -56,6 +56,21 @@ for file in $(find "$PULSAR" -type f -name "*.cpp"); do
   OBJECTS+=("$BUILD/$base.o")
 done
 
+# Compile all .S files in PULSAR
+for file in $(find "$PULSAR" -type f -name "*.s"); do
+  base=$(basename "$file" .s)
+  obj="$BUILD/$base.o"
+
+  if [ ! -f "$obj" ] || [ "$file" -nt "$obj" ]; then
+    echo "Compiling assembly $file"
+    WINEDEBUG=-all wine "$CC" "${CFLAGS[@]}" -c -o "$obj" "$file"
+  else
+    echo "Skipping assembly $file (up to date)"
+  fi
+
+  OBJECTS+=("$obj")
+done
+
 # Link all object files
 echo "Linking..."
 WINEDEBUG=-all wine "$LINKER" "$BUILD/kamek.o" "${OBJECTS[@]}" \

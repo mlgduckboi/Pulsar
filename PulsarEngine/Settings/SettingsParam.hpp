@@ -11,7 +11,7 @@ namespace Settings {
 class Params {
 public:
     static const int pulsarPageCount = 5;
-    static const int userPageCount = 2;
+    static const int userPageCount = 3;
     static const int pageCount = pulsarPageCount + userPageCount;
 
     static const int maxRadioCount = 6; //per page, due to space
@@ -37,7 +37,8 @@ enum Type {
 //If you want to add settings to your packs, they go in this enum, and GetUserSettingValue should be used to obtain the value of a given setting
 enum UserType {
     SETTINGSTYPE_TEST,
-    SETTINGSTYPE_KOVS
+    SETTINGSTYPE_KOVS,
+    SETTINGSTYPE_TEST2
 };
 
 }//namespace Settings
@@ -90,6 +91,7 @@ enum TestSettings {
     SETTINGTEST_RADIO_RELITEM = 1,
     SETTINGTEST_RADIO_NODRAG = 2,
     SETTINGTEST_RADIO_CUSTOMITEM = 3,
+    SETTINGTEST_RADIO_DD_DRIFT = 4,
     SETTINGTEST_SCROLL_LAPS = 0 + 6,
     SETTINGTEST_SCROLL_MODE = 1 + 6,
 };
@@ -98,6 +100,11 @@ enum KOVSSettings {
     SETTINGTEST_RADIO_LAPSPERKO = 0,
     SETTINGTEST_RADIO_NUMKOS = 1,
     SETTINGTEST_SCROLL_GLAPS = 0 + 6,
+};
+
+enum Test2Settings {
+    SETTINGTEST_RADIO_A = 0,
+    SETTINGTEST_SCROLL_B = 0 + 6,
 };
 
 //MENU SETTINGS
@@ -257,6 +264,11 @@ enum CustomItem {
     CUSTOMITEM_ENABLED,
 };
 
+enum DDDrift {
+    DD_DRIFT_ENABLED,
+    DD_DRIFT_DISABLED,
+};
+
 enum Laps {
     LAPS_DEFUALT,
     LAPS_ONE,
@@ -300,6 +312,20 @@ enum NumKOs {
     NUMKOS_2 = 2,
     NUMKOS_3 = 3,
     NUMKOS_4 = 4,
+};
+
+//Test Settings
+enum CCIncrease {
+    CCI_1,
+    CCI_2,
+    CCI_5,
+    CCI_50,
+    CCI_100
+};
+
+enum Chaos {
+    CHAOS_DISABLED,
+    CHAOS_ENABLED,
 };
 
 }//namespace Pulsar

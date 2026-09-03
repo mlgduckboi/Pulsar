@@ -156,6 +156,7 @@ void UpdateCtrlRaceTime(CtrlRaceTime* crt) {
             //if (globalTimestamp % 100 < 10) 
             if (restartStarTimer > 0) { restartStarTimer--; } else {
                 Kart::Manager::sInstance->players[currentHotPotato]->ActivateStarAnm();
+                //Kart::Manager::sInstance->players[currentHotPotato]->GetStarAnm().Activate();
                 restartStarTimer = 300;
             }
 
