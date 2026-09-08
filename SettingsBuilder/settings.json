@@ -1,0 +1,134 @@
+{
+  "pages": [
+    {
+      "page": 1,
+      "cpp_page": "E Settings",
+      "title": { "text": "E Settings", "dupe": "E Settings" },
+      "desc": "Access your E settings.",
+      "radios": [
+        {
+          "name": "FPS",
+          "options": [
+            { "name": "Default", "desc": "Game runs at default FPS." },
+            { "name": "30 FPS", "desc": "Game runs at 30 FPS." },
+            { "name": "60 FPS", "desc": "Game runs at 60 FPS." },
+            { "name": "Unused", "desc": "Unused." }
+          ]
+        },
+        {
+          "name": "Relative Items",
+          "options": [
+            { "name": "Disabled", "desc": null },
+            { "name": "Enabled", "desc": null }
+          ]
+        },
+        {
+          "name": "No Dragging",
+          "options": [
+            { "name": "Disabled", "desc": null },
+            { "name": "Enabled", "desc": null }
+          ]
+        },
+        {
+          "name": "Custom Items",
+          "options": [
+            { "name": "Disabled", "desc": null },
+            { "name": "Enabled", "desc": null }
+          ]
+        }
+      ],
+      "scrollers": [
+        {
+          "name": "Laps",
+          "desc_slot": { "h": 8, "t": 0 },
+          "options": [
+            { "name": "Default", "desc": "Races will be the default amount of laps." },
+            { "name": "1", "desc": "Races will be one laps." },
+            { "name": "2", "desc": "Races will be two laps." },
+            { "name": "3", "desc": "Races will be three laps." },
+            { "name": "4", "desc": "Races will be four laps." },
+            { "name": "5", "desc": "Races will be five laps." },
+            { "name": "6", "desc": "Races will be six laps." },
+            { "name": "7", "desc": "Races will be seven laps." },
+            { "name": "8", "desc": "Races will be eight laps." },
+            { "name": "9", "desc": "Races will be nine laps." }
+          ]
+        },
+        {
+          "name": "Mode",
+          "desc_slot": { "h": 9, "t": 0 },
+          "options": [
+            { "name": "Default", "desc": "Default VS." },
+            { "name": "KO VS", "desc": "KO VS." },
+            { "name": "FRF", "desc": "Frontrun Frenzy." },
+            { "name": "SSS", "desc": "Supersonic Sprint." },
+            { "name": "BBB", "desc": "Bobomb blast." }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "cpp_page": "KO VS Settings",
+      "title": { "text": "KO VS Settings", "dupe": "KO VS Settings" },
+      "desc": "Access your KO VS settings.",
+      "radios": [
+        {
+          "name": "Laps per KO",
+          "options": [
+            { "name": "1", "desc": "KOs happen every lap." },
+            { "name": "2", "desc": "KOs happen every 2 laps." },
+            { "name": "3", "desc": "KOs happen every 3 laps." },
+            { "name": "4", "desc": "KOs happen every 4 laps." }
+          ]
+        },
+        {
+          "name": "KOs",
+          "options": [
+            { "name": "1", "desc": "KOs happen 1 at a time." },
+            { "name": "2", "desc": "KOs happen 2 at a time." },
+            { "name": "3", "desc": "KOs happen 3 at a time." },
+            { "name": "4", "desc": "KOs happen 4 at a time." }
+          ]
+        }
+      ],
+      "scrollers": [
+        {
+          "name": "Grace Laps",
+          "desc_slot": { "h": 8, "t": 0 },
+          "options": [
+            { "name": "None", "desc": "No laps before KOs begin." },
+            { "name": "1", "desc": "1 lap before KOs begin." },
+            { "name": "2", "desc": "2 laps before KOs begin." },
+            { "name": "3", "desc": "3 laps before KOs begin." },
+            { "name": "4", "desc": "4 laps before KOs begin." }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "cpp_page": "Item Settings",
+      "title": { "text": "Item Settings", "dupe": "Item Settings" },
+      "desc": "Access your Item settings.",
+      "radios": [
+        {
+          "name": "Gay",
+          "options": [
+            { "name": "balls", "desc": "123" },
+            { "name": "fortnite", "desc": "asd" }
+          ]
+        },
+        {
+          "name": "Gay2",
+          "options": [
+            { "name": "balls2", "desc": "123" },
+            { "name": "fortnite2", "desc": "asd" }
+          ]
+        }
+      ],
+      "scrollers": [
+      ]
+    }
+  ]
+}

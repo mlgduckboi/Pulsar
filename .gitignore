@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+._*
 .DS_Store
 BuildCode.bat
 /cw
@@ -7,6 +8,8 @@ BuildCode.bat
 /PulsarPackCreator/Executable/input
 /testing
 /resources
+/tools
+/pack
 /releases
 /.vscode
 /compiler
