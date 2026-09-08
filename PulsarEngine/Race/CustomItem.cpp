@@ -9,6 +9,7 @@
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/Item/ItemBehaviour.hpp>
 #include <MarioKartWii/Item/ItemPlayer.hpp>
+#include <MarioKartWii/Item/ItemManager.hpp>
 #include <MarioKartWii/Driver/DriverManager.hpp>
 #include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
 #include <MarioKartWii/Race/RaceData.hpp>
@@ -25,12 +26,17 @@ namespace Race {
 static u8 worldUser = 0;
 static u32 worldTimer = 0;
 
+static u8 driftUser = 0;
+static u32 driftTimer = 0;
+
 static u32 frogTimer = 0;
 
 static u8 backwardsBUser = 0;
 static u32 backwardsBTimer = 0;
 static bool invertedThisTick[12];
 static int drift[24];
+static bool driftedThisTick[12];
+static float convert[7] = {-0.5f, -0.3f, 0.1f, 0.0f, 0.1f, 0.3f, 0.5f};
 
 enum CustomItemId {
     ENDERPEARL         = 0x21,
@@ -47,7 +53,8 @@ enum CustomItemId {
     GOLDEN_SHELL       = 0x2C,
     GOLDEN_BANANA      = 0x2D,
     ULTRACUT           = 0x2E,
-    BOOM_SHROOM        = 0x2F
+    BOOM_SHROOM        = 0x2F,
+    JOYCON             = 0x30
 };
 
 static u32 oilTimer = 0;
@@ -61,6 +68,9 @@ static void UpdateTimers() {
     }
     if (oilTimer > 0) {
         --oilTimer;
+    } 
+    if (driftTimer > 0) {
+        --driftTimer;
     }
     if (backwardsBTimer > 0) {
         --backwardsBTimer;
@@ -76,7 +86,7 @@ static void UpdateTimers() {
     }
     for (int i = 0; i < 12; ++i) {
         invertedThisTick[i] = false;
-
+        driftedThisTick[i] = false;
         //Item::Manager::sInstance->players[i].roulette.SetUnkItem(THUNDER_CLOUD);
         Item::Player* player = &(Item::Manager::sInstance->players[i]);
         Item::PlayerInventory& inventory = player->inventory;
@@ -177,6 +187,18 @@ Input::ControllerHolder& GetControllerHolder(Kart::Link *link) {
             state.stick.z *= -1;
             invertedThisTick[pid] = true;
         }
+    }
+    //pid != driftUser && 
+    if (driftTimer > 0) {
+        OS::Report("applying drift\n");
+        Input::State& state = ch->inputStates[0];
+        state.quantisedStickX += drift[pid*2];
+        state.quantisedStickY += drift[pid*2 + 1];
+        state.stick.x += convert[drift[pid*2] + 3];
+        state.stick.z += convert[drift[pid*2 + 1] + 3];
+        // TODO: make it affect state.stick
+        OS::Report("%d %d\n", drift[pid*2], drift[pid*2 + 1]);
+        driftedThisTick[pid] = true;
     }
     return *ch;
 }
@@ -280,6 +302,10 @@ static void ChangeItemBehaviour(){
 kmBranch(0x807bd1cc, ChangeItemBehaviour);
 
 ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position, bool isHuman, bool hasTripleItem, Item::Player* itemHolderPlayer) {
+    // 0x18 - 0x30?
+    if (isHuman) {
+        return static_cast<ItemId>(0x30);
+    }
     Raceinfo* ri = Raceinfo::sInstance;
     u8 idxLast = 11;
     if (Pulsar::Race::isKOmode) {
@@ -336,11 +362,11 @@ ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position
             bool isValid = false;
             while (!isValid) {
                 isValid = true;
-                itemId = 0x21 + (random->NextLimited(56) / 4);
+                itemId = 0x21 + (random->NextLimited(60) / 4); // 0x21–0x2f, 0x23 is skipped
                 if (itemId >= DEATHNOTE_ULTIMATE) { // skip ult death note
                     itemId++;
                 }
-                if ((backwardsBTimer + worldTimer + frogTimer + oilTimer > 0) 
+                if ((backwardsBTimer + worldTimer + frogTimer + oilTimer + driftTimer > 0) 
                 && (itemId == WORLD || 
                     itemId == FORG || 
                     itemId == BACKWARDS_B || 
@@ -353,8 +379,6 @@ ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position
             item = static_cast<ItemId>(random->NextLimited(0x13));
         }
     }   
-    //return static_cast<ItemId>(DEATHNOTE);
-    //return static_cast<ItemId>(0x2f);
     else if (Pulsar::Race::isFrontrunFrenzy) { 
         if (item == GREEN_SHELL || item == BANANA) {
             item = MUSHROOM;
@@ -368,6 +392,10 @@ ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position
             item = BLUE_SHELL;
         }
     }
+    //if (isHuman) {
+    //    item = static_cast<ItemId>(0x17);
+    //}
+    //OS::Report("itemid: %d\n", item);
     return item;
 }
 kmCall(0x807BA160, DecideItem);
@@ -652,11 +680,19 @@ void UseBabyOil(Item::PlayerObj& po) {
 }
 
 void UseJoycon(Item::PlayerObj& po) {
+    driftTimer = 450;
+    driftUser = po.GetPlayerIdx();
     for (int i = 0; i < 12; ++i) {
-        if (i == po.GetPlayerIdx()) continue;
+        //if (i == po.GetPlayerIdx()) continue;
         Random* random = DriverMgr::GetRaceinfoRandom();
-        drift[i*2] = random->NextLimited(10) - 5;
-        drift[i*2 + 1] = random->NextLimited(10) - 5;
+        drift[i*2] = random->NextLimited(6) - 3;
+        drift[i*2 + 1] = random->NextLimited(6) - 3;
+        if (drift[i*2] == 0) {
+            drift[i*2] += 1;
+        }
+        if (drift[i*2 + 1] == 0) {
+            drift[i*2 + 1] += 1;
+        }
     }
     //scale.z = 1.25;
     //po.GetMovement().scaleController->curScale = scale;
@@ -674,17 +710,9 @@ void CustomItemUseLogic(Item::PlayerObj& po, bool isRemote) {
         }
         return;
     }
-    if (po.itemPlayer->inventory.currentItemId >= 0x20) {
-        if (po.itemPlayer->inventory.currentItemId == 0x20) {
-            OS::Report("hanachan/fireball/0x20\n");
-        } /*else if (po.itemPlayer->inventory.currentItemId == 0x21) {
-            OS::Report("honeBall/wiggler/0x21\n");
-            //po.GetPhysics().fullRot;
-        } else if (po.itemPlayer->inventory.currentItemId == 0x22) {
-            OS::Report("wanwan/chomp/0x22\n");
-        } */
+    if (po.itemPlayer->inventory.currentItemId >= 0x15) {
         
-        else if (po.itemPlayer->inventory.currentItemId == 0x23) { //deathnote ultimate
+        if (po.itemPlayer->inventory.currentItemId == 0x23) { //deathnote ultimate
             UseUltimateDeathnote(po);
         } else if (po.itemPlayer->inventory.currentItemId == 0x24) { //backwards_b
             UseBackwardsB(po);
@@ -714,6 +742,8 @@ void CustomItemUseLogic(Item::PlayerObj& po, bool isRemote) {
             UseBabyOil(po);
         } else if (po.itemPlayer->inventory.currentItemId == 0x21) { //enderpearl
             UseSwap(po);
+        } else if (po.itemPlayer->inventory.currentItemId == 0x30) { //joycon
+            UseJoycon(po);
         }
         
         OS::Report("%d items on use\n", po.itemPlayer->inventory.currentItemCount);
@@ -733,7 +763,7 @@ kmWrite32(0x80791a38, 0x60000000); // noop isNotDraggedFlag
 
 void CustomItemCount(Item::PlayerInventory* pi) {
     //OS::Report("item count assigned: %d\n", pi->currentItemCount);
-    if (pi->currentItemId >= 0x20) {
+    if (pi->currentItemId >= 0x15) {
         if (pi->currentItemId == 0x2f) {
             pi->currentItemCount = 3;
         } else {
@@ -751,7 +781,7 @@ void itemRegisterCalled() {
 
 void registerLostItemCalled(Item::PlayerInventory* pi) {
     OS::Report("other lose item called! %d\n", pi->currentItemId);
-    if (pi->currentItemId >= 0x20) {
+    if (pi->currentItemId >= 0x15) {
         pi->ClearAll();
         return;
     }
@@ -770,14 +800,22 @@ void loseItemOnDmg(Item::PlayerInventory* pi) {
             pi->currentItemCount = 1;
         }
     }
-    //if (pi->currentItemId >= 0x20) return;
-    if (pi->currentItemId >= 0x20) {
+    //if (pi->currentItemId >= 0x15) return;
+    if (pi->currentItemId >= 0x15) {
         pi->ClearAll();
         return;
     }
     pi->LoseItemFromDmg();
 }
 kmCall(0x80798aac,loseItemOnDmg);
+
+bool OverrideCapacity(ItemId id) {
+    if (id > 0x15) {
+        return true;
+    }
+    return Item::Manager::sInstance->IsThereCapacityForItem(id);
+}
+kmCall(0x807ba17c,OverrideCapacity);
 
 }//namespace Race
 }//namespace Pulsar
