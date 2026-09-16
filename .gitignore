@@ -9,7 +9,7 @@ BuildCode.bat
 /testing
 /resources
 /tools
-/pack
+/packTemplate/*
 /releases
 /.vscode
 /compiler
