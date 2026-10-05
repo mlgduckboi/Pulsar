@@ -3,6 +3,7 @@
 ._*
 .DS_Store
 BuildCode.bat
+/packBuild/*
 /cw
 /PulsarPackCreator/Executable/output
 /PulsarPackCreator/Executable/input

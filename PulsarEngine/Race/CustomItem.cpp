@@ -33,9 +33,17 @@ static u32 frogTimer = 0;
 
 static u8 backwardsBUser = 0;
 static u32 backwardsBTimer = 0;
+
+static u8 mouseUser = 0;
+static u32 mouseTimer = 0;
+
+static u8 inventory[12][11] = {0};
 static bool invertedThisTick[12];
 static int drift[24];
 static bool driftedThisTick[12];
+static bool mouseTick[12];
+static u32 lastPress[12];
+static bool btnDownLastTick[12];
 static float convert[7] = {-0.5f, -0.3f, 0.1f, 0.0f, 0.1f, 0.3f, 0.5f};
 
 enum CustomItemId {
@@ -53,11 +61,44 @@ enum CustomItemId {
     GOLDEN_SHELL       = 0x2C,
     GOLDEN_BANANA      = 0x2D,
     ULTRACUT           = 0x2E,
-    BOOM_SHROOM        = 0x2F,
-    JOYCON             = 0x30
+    BOOM_SHROOM        = 0x2F, //end 1.0 items
+    JOYCON             = 0x30, // done
+    CROOK              = 0x31,
+    CRIMELORD          = 0x32,
+    MEDUSA             = 0x33,
+    CONDOM             = 0x34,
+    PREGNANT           = 0x35,
+    BABY               = 0x36,
+    COMMUNIST          = 0x37,
+    GOLDEN_ULTRA       = 0x38, // done
+    MOUSE              = 0x39, // done
+    WISHING_WILLOW     = 0x3A,
+    MAILROOM           = 0x3B,
+    CELCIUS            = 0x3C, 
 };
 
 static u32 oilTimer = 0;
+
+void ResetInventory() {
+    for (int p = 0; p < 12; ++p)
+    for (int s = 0; s < 11; ++s)
+        inventory[p][s] = ITEM_NONE;
+}
+RaceLoadHook resetInventory(ResetInventory);
+
+void FillInvWithNextItem(Item::PlayerInventory* pi) {
+    u8 pid = pi->itemPlayer->id;
+    OS::Report("fill inv called! %d\n", inventory[pid][0]);
+    if (inventory[pid][0] == ITEM_NONE || pi->currentItemId != ITEM_NONE) {
+        return;
+    }
+    u8 i = 10;
+    while (inventory[pid][i] == ITEM_NONE && i > 0) {
+        i--;
+    }
+    pi->SetItem(static_cast<ItemId>(inventory[pid][i]), false);
+    inventory[pid][i] = ITEM_NONE;
+}
 
 static void UpdateTimers() {
     if (worldTimer > 0) {
@@ -71,6 +112,9 @@ static void UpdateTimers() {
     } 
     if (driftTimer > 0) {
         --driftTimer;
+    }
+    if (mouseTimer > 0) {
+        --mouseTimer;
     }
     if (backwardsBTimer > 0) {
         --backwardsBTimer;
@@ -87,6 +131,8 @@ static void UpdateTimers() {
     for (int i = 0; i < 12; ++i) {
         invertedThisTick[i] = false;
         driftedThisTick[i] = false;
+        mouseTick[i] = false;
+        lastPress[i]++;
         //Item::Manager::sInstance->players[i].roulette.SetUnkItem(THUNDER_CLOUD);
         Item::Player* player = &(Item::Manager::sInstance->players[i]);
         Item::PlayerInventory& inventory = player->inventory;
@@ -94,6 +140,9 @@ static void UpdateTimers() {
             && (player->pointers->kartStatus->bitfield2 & 0x8000000) == 0) {
             inventory.currentItemCount = 1;
             inventory.currentItemId = static_cast<ItemId>(0x23);
+        }
+        if (inventory.currentItemId == ITEM_NONE) {
+            FillInvWithNextItem(&inventory);
         }
 
         if (inventory.currentItemId == 0x2c || inventory.currentItemId == 0x2d) {
@@ -186,6 +235,32 @@ Input::ControllerHolder& GetControllerHolder(Kart::Link *link) {
             state.stick.x *= -1;
             state.stick.z *= -1;
             invertedThisTick[pid] = true;
+        }
+    }
+    if (pid != mouseUser && mouseTimer > 0) {
+        OS::Report("mouse timer: %d\n", mouseTimer);
+        if (!mouseTick[pid]) {
+            Input::State& cur = ch->inputStates[0];
+            Input::State& prev = ch->inputStates[1];
+            if (cur.buttonActions & 0x1) {
+                if (!btnDownLastTick[pid]) {
+                    OS::Report("mouse pressed\n");
+                    lastPress[pid] = 0;
+                }
+                btnDownLastTick[pid] = true;
+            } else {
+                btnDownLastTick[pid] = false;
+            }
+
+            if (lastPress[pid] < 30) {
+                OS::Report("applying mouse\n");
+                cur.buttonActions |= 0x1;
+                cur.buttonRaw |= 0x1;
+            } else {
+                cur.buttonActions &= ~0x1;
+                cur.buttonRaw &= ~0x1;
+            }
+            mouseTick[pid] = true;
         }
     }
     //pid != driftUser && 
@@ -303,8 +378,8 @@ kmBranch(0x807bd1cc, ChangeItemBehaviour);
 
 ItemId DecideItem(Item::ItemSlotData* itemSlotData, u16 itemBoxType, u8 position, bool isHuman, bool hasTripleItem, Item::Player* itemHolderPlayer) {
     // 0x18 - 0x30?
-    if (isHuman) {
-        return static_cast<ItemId>(0x30);
+    if (itemHolderPlayer->GetPlayerIdx() == 0) {
+        return static_cast<ItemId>(CRIMELORD);
     }
     Raceinfo* ri = Raceinfo::sInstance;
     u8 idxLast = 11;
@@ -448,6 +523,88 @@ void SwapRaceinfoPlayerProgress(RaceinfoPlayer* a, RaceinfoPlayer* b) {
     temp_u8 = a->currentKCP;
     a->currentKCP = b->currentKCP;
     b->currentKCP = temp_u8;
+}
+
+void CustomItemCount(Item::PlayerInventory* pi) {
+    //OS::Report("item count assigned: %d\n", pi->currentItemCount);
+    if (pi->currentItemId >= 0x15) {
+        if (pi->currentItemId == 0x2f) {
+            pi->currentItemCount = 3;
+        } else {
+            pi->currentItemCount = 1;
+        }
+    }
+    return;
+}
+kmBranch(0x807bc978, CustomItemCount);
+
+
+
+void loseItemOnDmg(Item::PlayerInventory* pi) {
+    OS::Report("dmg lose item called! %d\n", pi->currentItemId);
+    if (isNukes) {
+        if (pi->currentItemCount > 7) {
+            pi->currentItemCount = 3;
+        } else if (pi->currentItemCount > 4) {
+            pi->currentItemCount = 2;
+        } else if (pi->currentItemCount > 1) {
+            pi->currentItemCount = 1;
+        }
+    }
+    //if (pi->currentItemId >= 0x15) return;
+    if (pi->currentItemId >= 0x15) {
+        pi->ClearAll();
+        return;
+    }
+    pi->LoseItemFromDmg();
+    FillInvWithNextItem(pi);
+}
+kmCall(0x80798aac,loseItemOnDmg);
+
+void UseCrimeLord(Item::PlayerObj& po) {
+    OS::Report("use crimelord called\n");
+    u8 pid = po.GetPlayerIdx();
+    int curInvSlot = 0;
+    while (curInvSlot < 11 && inventory[pid][curInvSlot] != ITEM_NONE) {
+        curInvSlot++;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (i == pid || curInvSlot > 10) continue;
+        
+        Item::Player& otherPlayer = Item::Manager::sInstance->players[i];
+        
+        if (otherPlayer.inventory.currentItemId == ITEM_NONE) continue;
+        u8 itemId;
+        if (otherPlayer.roulette.isTheRouletteSpinning) {
+            itemId = otherPlayer.roulette.nextItemId;
+        } else {
+            itemId = otherPlayer.inventory.currentItemId;
+        }
+        inventory[pid][curInvSlot] = itemId;
+        curInvSlot++;
+        loseItemOnDmg(&otherPlayer.inventory);
+        OS::Report("stole %d\n", inventory[pid][curInvSlot]);
+    }
+}
+
+void UseCrook(Item::PlayerObj& po) {
+    u8 pid = po.GetPlayerIdx();
+    int curInvSlot = 0;
+    while (curInvSlot < 11 && inventory[pid][curInvSlot] != ITEM_NONE) {
+        curInvSlot++;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (i == pid || curInvSlot > 10) continue;
+        
+        Item::Player& otherPlayer = Item::Manager::sInstance->players[i];;
+
+        if (otherPlayer.inventory.currentItemId == ITEM_NONE) continue;
+
+        inventory[pid][curInvSlot] = otherPlayer.inventory.currentItemId;
+        curInvSlot++;
+        loseItemOnDmg(&otherPlayer.inventory);
+        break;
+    }
 }
 
 void UseSwap(Item::PlayerObj& po) {
@@ -619,9 +776,14 @@ void UseGoldenBanana(Item::PlayerObj& po) {
     pi.goldenTimer = timer;
 }
 
-void UseUltracut(Item::PlayerObj& po) {
+void UseUltracut(Item::PlayerObj& po, u32 laps) {
     RaceinfoPlayer* player = Raceinfo::sInstance->players[po.pointers->values->playerIdx];
-    player->EndLap();
+    for (u32 i = 0; i < laps; ++i) {
+        player->EndLap();
+        if (player->currentLap >= player->maxLap) {
+            break;
+        }
+    }
 }
 
 void UseBoomShroom(Item::PlayerObj& po) {
@@ -699,6 +861,13 @@ void UseJoycon(Item::PlayerObj& po) {
     //po.GetMovement().scaleController->RequestScaleChange(false);
 }
 
+void UseMouse(Item::PlayerObj& po) {
+    mouseTimer = 450;
+    mouseUser = po.GetPlayerIdx();
+}
+
+
+
 void CustomItemUseLogic(Item::PlayerObj& po, bool isRemote) {
     if (isNukes) {
         u32 itemCount = --po.itemPlayer->inventory.currentItemCount;
@@ -712,48 +881,58 @@ void CustomItemUseLogic(Item::PlayerObj& po, bool isRemote) {
     }
     if (po.itemPlayer->inventory.currentItemId >= 0x15) {
         
-        if (po.itemPlayer->inventory.currentItemId == 0x23) { //deathnote ultimate
+        if (po.itemPlayer->inventory.currentItemId == DEATHNOTE) { //deathnote ultimate
             UseUltimateDeathnote(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x24) { //backwards_b
+        } else if (po.itemPlayer->inventory.currentItemId == BACKWARDS_B) { //backwards_b
             UseBackwardsB(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x25) { //nuke_button
+        } else if (po.itemPlayer->inventory.currentItemId == NUKE_BUTTON) { //nuke_button
             UseNuke(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x26) { //nuke_mega
+        } else if (po.itemPlayer->inventory.currentItemId == NUKE_MEGA) { //nuke_mega
             UseMegaNuke(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x27) { //nuke_reverse
+        } else if (po.itemPlayer->inventory.currentItemId == NUKE_REVERSE) { //nuke_reverse
             UseReverseNuke(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x28) { //forg
+        } else if (po.itemPlayer->inventory.currentItemId == FORG) { //forg
             UseForg(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x29) { //crazE
+        } else if (po.itemPlayer->inventory.currentItemId == CRAZE) { //crazE
             UseCrazE(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x2a) { //deathnote
+        } else if (po.itemPlayer->inventory.currentItemId == DEATHNOTE) { //deathnote
             UseDeathnote(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x2b) { //world
+        } else if (po.itemPlayer->inventory.currentItemId == WORLD) { //world
             UseWorld(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x2c) { //gold shell
+        } else if (po.itemPlayer->inventory.currentItemId == GOLDEN_SHELL) { //gold shell
             UseGoldenShell(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x2d) { //gold banana
+        } else if (po.itemPlayer->inventory.currentItemId == GOLDEN_BANANA) { //gold banana
             UseGoldenBanana(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x2e) { //ultracut
-            UseUltracut(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x2f) { //boom shroom
+        } else if (po.itemPlayer->inventory.currentItemId == ULTRACUT) { //ultracut
+            UseUltracut(po, 1);
+        } else if (po.itemPlayer->inventory.currentItemId == BOOM_SHROOM) { //boom shroom
             UseBoomShroom(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x22) { //baby oil
+        } else if (po.itemPlayer->inventory.currentItemId == BABY_OIL) { //baby oil
             UseBabyOil(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x21) { //enderpearl
+        } else if (po.itemPlayer->inventory.currentItemId == ENDERPEARL) { //enderpearl
             UseSwap(po);
-        } else if (po.itemPlayer->inventory.currentItemId == 0x30) { //joycon
+        } else if (po.itemPlayer->inventory.currentItemId == JOYCON) { //joycon
             UseJoycon(po);
+        } else if (po.itemPlayer->inventory.currentItemId == MOUSE) { //mouse
+            UseMouse(po);
+        } else if (po.itemPlayer->inventory.currentItemId == GOLDEN_ULTRA) { // golden ultracut
+            UseUltracut(po, 3);
+        } else if (po.itemPlayer->inventory.currentItemId == CROOK) { // crook
+            UseCrook(po);
+        } else if (po.itemPlayer->inventory.currentItemId == CRIMELORD) { // crime lord
+            UseCrimeLord(po);
         }
         
         OS::Report("%d items on use\n", po.itemPlayer->inventory.currentItemCount);
         po.itemPlayer->inventory.RemoveItems(1);
+        FillInvWithNextItem(&po.itemPlayer->inventory);
         return;
     }
     po.isNotDragged = false;
     //ItemId cur = po.itemPlayer->inventory.currentItemId;
     //if (cur == RED_SHELL || cur == GREEN_SHELL || cur == BANANA) po.isNotDragged = true;
     po.UseItem(isRemote);
+    FillInvWithNextItem(&po.itemPlayer->inventory);
 }
 
 kmCall(0x80795764,CustomItemUseLogic); // PlayerObj_UpdateRemote
@@ -761,18 +940,6 @@ kmCall(0x80797f94,CustomItemUseLogic); // ItemPlayer_Update
 
 kmWrite32(0x80791a38, 0x60000000); // noop isNotDraggedFlag
 
-void CustomItemCount(Item::PlayerInventory* pi) {
-    //OS::Report("item count assigned: %d\n", pi->currentItemCount);
-    if (pi->currentItemId >= 0x15) {
-        if (pi->currentItemId == 0x2f) {
-            pi->currentItemCount = 3;
-        } else {
-            pi->currentItemCount = 1;
-        }
-    }
-    return;
-}
-kmBranch(0x807bc978, CustomItemCount);
 
 void itemRegisterCalled() {
     OS::Report("ObjHolder_registerNew() called\n");
@@ -789,25 +956,6 @@ void registerLostItemCalled(Item::PlayerInventory* pi) {
 }
 //kmCall(0x807bc72c, registerLostItemCalled);
 
-void loseItemOnDmg(Item::PlayerInventory* pi) {
-    OS::Report("dmg lose item called! %d\n", pi->currentItemId);
-    if (isNukes) {
-        if (pi->currentItemCount > 7) {
-            pi->currentItemCount = 3;
-        } else if (pi->currentItemCount > 4) {
-            pi->currentItemCount = 2;
-        } else if (pi->currentItemCount > 1) {
-            pi->currentItemCount = 1;
-        }
-    }
-    //if (pi->currentItemId >= 0x15) return;
-    if (pi->currentItemId >= 0x15) {
-        pi->ClearAll();
-        return;
-    }
-    pi->LoseItemFromDmg();
-}
-kmCall(0x80798aac,loseItemOnDmg);
 
 bool OverrideCapacity(ItemId id) {
     if (id > 0x15) {

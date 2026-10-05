@@ -143,7 +143,6 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
     const bool feather = System::sInstance->IsContext(PULSAR_FEATHER);
     const bool megaTC = System::sInstance->IsContext(PULSAR_MEGATC);
     const char* paneName;
-    OS::Report("item window with id: %d\n", id);
     if (id == BLOOPER && feather) {
         if (itemCount == 2) paneName = "feather_2";
         else if (itemCount == 3) paneName = "feather_3";
