@@ -180,7 +180,12 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
     else if (id == 0x2f) paneName = "boom_shroom";
     else if (id == 0x22) paneName = "baby_oil";
     else if (id == 0x21) paneName = "ender_pearl";
-    else if (id >= 0x15) paneName = "wanwan";
+    else if (id == 0x38) paneName = "golden_ultra";
+    else if (id == 0x39) paneName = "mouse";
+    else if (id == 0x31) paneName = "crook";
+    else if (id == 0x32) paneName = "crimelord";
+    else if (id == 0x30) paneName = "joycon";
+    else if (id >= ITEM_NONE) paneName = "wanwan";
     else paneName = GetItemIconPaneName(id, itemCount);
     return paneName;
 }

@@ -63,8 +63,8 @@ enum CustomItemId {
     ULTRACUT           = 0x2E,
     BOOM_SHROOM        = 0x2F, //end 1.0 items
     JOYCON             = 0x30, // done
-    CROOK              = 0x31,
-    CRIMELORD          = 0x32,
+    CROOK              = 0x31, // done
+    CRIMELORD          = 0x32, // done
     MEDUSA             = 0x33,
     CONDOM             = 0x34,
     PREGNANT           = 0x35,
